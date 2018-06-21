@@ -4,7 +4,7 @@
   "main": "index.js",
   "author": "Robert Jackson <rjackson@linkedin.com>",
   "license": "MIT",
-  "bin": "./index.js",
+  "bin": "./cli.js",
   "dependencies": {
     "esm": "^3.0.52",
     "fs-extra": "^6.0.1",
