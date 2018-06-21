@@ -35,12 +35,6 @@ jobs:
     - env: NAME=Node_8
       node_js: "8"
 
-    - env: NAME=Node_9
-      node_js: "9"
-
-    - env: NAME=Node_10
-      node_js: "10"
-
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
