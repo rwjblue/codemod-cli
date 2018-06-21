@@ -7,4 +7,6 @@
 require('yargs')
   .commandDir('commands')
   .demandCommand()
-  .help().argv;
+  .help()
+  .epilog('For more information, see https://github.com/rwjblue/codemod-cli')
+  .parse();
