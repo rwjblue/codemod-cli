@@ -4,4 +4,4 @@ export function builder(yargs) {
   yargs.commandDir('generate');
 }
 
-export function handler(options) {}
+export function handler() {}
