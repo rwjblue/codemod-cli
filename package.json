@@ -1,0 +1,12 @@
+{
+  "name": "codemod-cli",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Robert Jackson <rjackson@linkedin.com>",
+  "license": "MIT",
+  "bin": "./index.js",
+  "dependencies": {
+    "fs-extra": "^6.0.1",
+    "yargs": "^11.0.0"
+  }
+}
