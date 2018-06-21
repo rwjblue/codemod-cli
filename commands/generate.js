@@ -1,9 +1,7 @@
-'use strict';
+export const command = 'generate <type>';
 
-module.exports = {
-  command: 'generate <type>',
-  builder: yargs => {
-    yargs.commandDir('generate');
-  },
-  handler: () => {},
-};
+export function builder(yargs) {
+  yargs.commandDir('generate');
+}
+
+export function handler(options) {}

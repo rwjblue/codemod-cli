@@ -6,6 +6,7 @@
   "license": "MIT",
   "bin": "./index.js",
   "dependencies": {
+    "esm": "^3.0.52",
     "fs-extra": "^6.0.1",
     "yargs": "^11.0.0"
   }

@@ -1,24 +1,22 @@
-'use strict';
+export const command = 'new <project-name>';
+export const desc = 'Generate a new codemod project';
 
-module.exports = {
-  command: 'new <project-name>',
-  desc: 'Generate a new codemod project',
-  builder: yargs => {
-    yargs.positional('project-name', {
-      describe: 'The name of the project to generate',
-    });
-  },
-  handler: function(options) {
-    let { projectName } = options;
+export function builder(yargs) {
+  yargs.positional('project-name', {
+    describe: 'The name of the project to generate',
+  });
+}
 
-    const fs = require('fs-extra');
+export function handler(options) {
+  let { projectName } = options;
 
-    fs.ensureDirSync(projectName);
-    fs.writeJsonSync(projectName + '/package.json', {
-      name: projectName,
-      version: '0.1.0',
-    });
-    fs.ensureDirSync(projectName + '/transforms');
-    fs.writeFileSync(projectName + '/transforms/.gitkeep', '', 'utf8');
-  },
-};
+  const fs = require('fs-extra');
+
+  fs.ensureDirSync(projectName);
+  fs.writeJsonSync(projectName + '/package.json', {
+    name: projectName,
+    version: '0.1.0',
+  });
+  fs.ensureDirSync(projectName + '/transforms');
+  fs.writeFileSync(projectName + '/transforms/.gitkeep', '', 'utf8');
+}
