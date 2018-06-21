@@ -1,0 +1,53 @@
+---
+language: node_js
+node_js:
+  - "10"
+
+sudo: false
+dist: trusty
+
+cache:
+  yarn: true
+
+stages:
+  - test
+  - additional tests
+
+jobs:
+  fail_fast: true
+
+  include:
+    # runs tests with current locked deps and linting
+    - stage: test
+      env: NAME=test
+      script:
+        - yarn lint:js
+        - yarn test
+
+    - stage: additional tests
+      env: NAME=floating dependencies
+      install: yarn install --no-lockfile --non-interactive
+      script: yarn test
+
+    - env: NAME=Node_6
+      node_js: "6"
+
+    - env: NAME=Node_8
+      node_js: "8"
+
+    - env: NAME=Node_9
+      node_js: "9"
+
+    - env: NAME=Node_10
+      node_js: "10"
+
+
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH=$HOME/.yarn/bin:$PATH
+
+install:
+  - yarn install
+
+script:
+  - yarn test
