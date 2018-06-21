@@ -1,14 +1,30 @@
 {
   "name": "codemod-cli",
   "version": "1.0.0",
-  "main": "index.js",
-  "author": "Robert Jackson <rjackson@linkedin.com>",
   "license": "MIT",
+  "author": "Robert Jackson <rjackson@linkedin.com>",
+  "main": "index.js",
   "bin": "./cli.js",
+  "scripts": {
+    "changelog": "lerna-changelog",
+    "lint:js": "eslint .",
+    "test": "echo no tests!"
+  },
   "dependencies": {
     "esm": "^3.0.52",
     "fs-extra": "^6.0.1",
     "liftoff": "^2.5.0",
     "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "lerna-changelog": "^0.8.0",
+    "prettier": "^1.13.5"
+  },
+  "engines": {
+    "node": "6.* || 8.* || >= 10"
   }
 }
