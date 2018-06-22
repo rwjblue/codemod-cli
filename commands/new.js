@@ -1,3 +1,5 @@
+import pkg from '../package';
+
 export const command = 'new <project-name>';
 export const desc = 'Generate a new codemod project';
 
@@ -16,6 +18,9 @@ export function handler(options) {
   fs.writeJsonSync(projectName + '/package.json', {
     name: projectName,
     version: '0.1.0',
+    devDependencies: {
+      'codemod-cli': `^${pkg.VERSION}`,
+    },
   });
   fs.ensureDirSync(projectName + '/transforms');
   fs.writeFileSync(projectName + '/transforms/.gitkeep', '', 'utf8');
