@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 'use strict';
 
+if (process.env.REQUIRE_TRACE) {
+  // eslint-disable-next-line node/no-unpublished-require
+  const requireSoSlow = require('require-so-slow');
+  process.on('exit', function() {
+    requireSoSlow.write('require-trace.trace');
+  });
+}
+
 const importLocal = require('import-local');
 const pkgUp = require('pkg-up');
 
