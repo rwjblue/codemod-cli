@@ -22,6 +22,7 @@ export function handler(options) {
       version: '0.1.0',
       devDependencies: {
         'codemod-cli': `^${pkg.version}`,
+        jest: pkg.devDependencies.jest,
       },
     },
     {

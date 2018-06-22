@@ -17,7 +17,7 @@ export function handler(options) {
 
   const fs = require('fs-extra');
 
-  let fixturePath = `${codemodDir}/__test_fixtures__/${fixtureName}`;
+  let fixturePath = `${codemodDir}/__testfixtures__/${fixtureName}`;
 
   fs.outputFileSync(`${fixturePath}.input.js`, '');
   fs.outputFileSync(`${fixturePath}.output.js`, '');
