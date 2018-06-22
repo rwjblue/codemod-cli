@@ -1,20 +1,33 @@
 #!/usr/bin/env node
 'use strict';
 
-/* eslint-env node */
+const importLocal = require('import-local');
+const pkgUp = require('pkg-up');
 
-const Liftoff = require('liftoff');
-let CodemodCLI = new Liftoff({
-  name: 'codemod-cli',
-  configName: '.codemod-cli',
-});
+function insideProject() {
+  let nearestPackagePath = pkgUp.sync();
 
-CodemodCLI.launch({}, (/* env */) => {
-  const args = require('yargs')
-    .commandDir('../commands')
+  if (nearestPackagePath === null) {
+    return false;
+  }
+
+  let pkg = require(nearestPackagePath);
+
+  return pkg.keywords && pkg.keywords.includes('codemod-cli');
+}
+
+if (importLocal(__filename) || insideProject()) {
+  require('yargs')
+    .commandDir('../commands/local')
     .demandCommand()
     .help()
-    .epilog('For more information, see https://github.com/rwjblue/codemod-cli');
-
-  args.parse();
-});
+    .epilog('For more information, see https://github.com/rwjblue/codemod-cli')
+    .parse();
+} else {
+  require('yargs')
+    .commandDir('../commands/global')
+    .demandCommand()
+    .help()
+    .epilog('For more information, see https://github.com/rwjblue/codemod-cli')
+    .parse();
+}

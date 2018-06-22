@@ -1,4 +1,4 @@
-const pkg = require('../package.json');
+'use strict';
 
 module.exports.command = 'new <project-name>';
 module.exports.desc = 'Generate a new codemod project';
@@ -13,6 +13,7 @@ module.exports.handler = function handler(options) {
   let { projectName } = options;
 
   const fs = require('fs-extra');
+  const pkg = require('../../package.json');
 
   fs.outputFileSync(projectName + '/README.md', `# ${projectName}\n`, 'utf8');
   fs.outputJsonSync(
@@ -23,6 +24,7 @@ module.exports.handler = function handler(options) {
       script: {
         test: 'codemod-cli test',
       },
+      keywords: [ 'codemod-cli' ],
       devDependencies: {
         'codemod-cli': `^${pkg.version}`,
       },

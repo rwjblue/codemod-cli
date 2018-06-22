@@ -13,9 +13,10 @@
   "dependencies": {
     "common-tags": "^1.8.0",
     "fs-extra": "^6.0.1",
+    "import-local": "^1.0.0",
     "jest": "^23.1.0",
     "jscodeshift": "^0.5.1",
-    "liftoff": "^2.5.0",
+    "pkg-up": "^2.0.0",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
