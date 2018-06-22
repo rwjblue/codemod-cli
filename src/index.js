@@ -1,5 +1,7 @@
 'use strict';
 
+/* global it, describe */
+
 const { runInlineTest } = require('jscodeshift/dist/testUtils');
 const fs = require('fs-extra');
 const path = require('path');
@@ -20,7 +22,6 @@ function jscodeshiftTest(options) {
 
   let transform = require(details.transformPath);
 
-  // ** make the tests **
   describe(details.name, function() {
     fs.readdirSync(details.fixtureDir)
       .filter(filename => /\.input$/.test(path.basename(filename, path.extname(filename))))

@@ -20,9 +20,11 @@ module.exports.handler = function handler(options) {
     {
       name: projectName,
       version: '0.1.0',
+      script: {
+        test: 'codemod-cli test',
+      },
       devDependencies: {
         'codemod-cli': `^${pkg.version}`,
-        jest: pkg.devDependencies.jest,
       },
     },
     {
