@@ -15,6 +15,7 @@ export function handler(options) {
   const fs = require('fs-extra');
 
   fs.ensureDirSync(projectName);
+  fs.ensureFileSync(projectName + '/README.md', `# ${projectName}\n`, 'utf8');
   fs.writeJsonSync(projectName + '/package.json', {
     name: projectName,
     version: '0.1.0',
@@ -22,6 +23,5 @@ export function handler(options) {
       'codemod-cli': `^${pkg.VERSION}`,
     },
   });
-  fs.ensureDirSync(projectName + '/transforms');
-  fs.writeFileSync(projectName + '/transforms/.gitkeep', '', 'utf8');
+  fs.ensureFileSync(projectName + '/transforms/.gitkeep', '', 'utf8');
 }

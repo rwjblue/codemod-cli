@@ -37,6 +37,7 @@ QUnit.module('codemod-cli', function(hooks) {
         assert.equal(result.code, 0, 'exited with zero');
         assert.deepEqual(walkSync(input.path()), [
           'ember-qunit-codemod/',
+          'ember-qunit-codemod/README.md',
           'ember-qunit-codemod/package.json',
           'ember-qunit-codemod/transforms/',
           'ember-qunit-codemod/transforms/.gitkeep',
