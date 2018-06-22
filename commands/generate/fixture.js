@@ -19,6 +19,6 @@ export function handler(options) {
 
   let fixturePath = `${codemodDir}/__test_fixtures__/${fixtureName}`;
 
-  fs.ensureFileSync(`${fixturePath}.input.js`, '');
-  fs.ensureFileSync(`${fixturePath}.output.js`, '');
+  fs.outputFileSync(`${fixturePath}.input.js`, '');
+  fs.outputFileSync(`${fixturePath}.output.js`, '');
 }

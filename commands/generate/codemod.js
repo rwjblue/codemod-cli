@@ -13,6 +13,6 @@ export function handler(options) {
 
   const fs = require('fs-extra');
 
-  fs.ensureFileSync(`${codemodDir}/index.js`, '', 'utf8');
-  fs.ensureFileSync(`${codemodDir}/README.md`, `# ${codemodName}\n`, 'utf8');
+  fs.outputFileSync(`${codemodDir}/index.js`, '', 'utf8');
+  fs.outputFileSync(`${codemodDir}/README.md`, `# ${codemodName}\n`, 'utf8');
 }
