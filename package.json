@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "common-tags": "^1.8.0",
-    "esm": "^3.0.52",
     "fs-extra": "^6.0.1",
+    "jest": "^23.1.0",
     "jscodeshift": "^0.5.1",
     "liftoff": "^2.5.0",
     "yargs": "^11.0.0"
@@ -26,7 +26,6 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-prettier": "^2.6.0",
     "execa": "^0.10.0",
-    "jest": "^23.1.0",
     "lerna-changelog": "^0.8.0",
     "prettier": "^1.13.5",
     "qunit": "^2.6.1",

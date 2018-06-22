@@ -10,9 +10,6 @@ let CodemodCLI = new Liftoff({
 });
 
 CodemodCLI.launch({}, (/* env */) => {
-  // eslint-disable-next-line no-global-assign
-  require = require('esm')(module /*, options*/);
-
   const args = require('yargs')
     .commandDir('../commands')
     .demandCommand()

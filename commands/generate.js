@@ -1,8 +1,8 @@
-export const command = 'generate <type>';
-export const desc = 'Generate files within an existing project';
+module.exports.command = 'generate <type>';
+module.exports.desc = 'Generate files within an existing project';
 
-export function builder(yargs) {
+module.exports.builder = function builder(yargs) {
   yargs.commandDir('generate');
-}
+};
 
-export function handler() {}
+module.exports.handler = function handler() {};

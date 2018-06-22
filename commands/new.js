@@ -1,15 +1,15 @@
-import pkg from '../package';
+const pkg = require('../package.json');
 
-export const command = 'new <project-name>';
-export const desc = 'Generate a new codemod project';
+module.exports.command = 'new <project-name>';
+module.exports.desc = 'Generate a new codemod project';
 
-export function builder(yargs) {
+module.exports.builder = function builder(yargs) {
   yargs.positional('project-name', {
     describe: 'The name of the project to generate',
   });
-}
+};
 
-export function handler(options) {
+module.exports.handler = function handler(options) {
   let { projectName } = options;
 
   const fs = require('fs-extra');
@@ -30,4 +30,4 @@ export function handler(options) {
     }
   );
   fs.ensureFileSync(projectName + '/transforms/.gitkeep');
-}
+};

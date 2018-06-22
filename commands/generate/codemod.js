@@ -1,15 +1,15 @@
-import { stripIndent } from 'common-tags';
+const { stripIndent } = require('common-tags');
 
-export const command = 'codemod <codemod-name>';
-export const desc = 'Generate a new codemod file';
+module.exports.command = 'codemod <codemod-name>';
+module.exports.desc = 'Generate a new codemod file';
 
-export function builder(yargs) {
+module.exports.builder = function builder(yargs) {
   yargs.positional('codemod-name', {
     describe: 'the name of the codemod to generate',
   });
-}
+};
 
-export function handler(options) {
+module.exports.handler = function handler(options) {
   let { codemodName } = options;
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
 
@@ -49,4 +49,4 @@ export function handler(options) {
     'utf8'
   );
   fs.outputFileSync(`${codemodDir}/README.md`, `# ${codemodName}\n`, 'utf8');
-}
+};
