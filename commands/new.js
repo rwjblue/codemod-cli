@@ -20,7 +20,7 @@ export function handler(options) {
     name: projectName,
     version: '0.1.0',
     devDependencies: {
-      'codemod-cli': `^${pkg.VERSION}`,
+      'codemod-cli': `^${pkg.version}`,
     },
   });
   fs.ensureFileSync(projectName + '/transforms/.gitkeep', '', 'utf8');
