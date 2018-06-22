@@ -4,7 +4,7 @@
   "license": "MIT",
   "author": "Robert Jackson <rjackson@linkedin.com>",
   "main": "index.js",
-  "bin": "./cli.js",
+  "bin": "./bin/cli.js",
   "scripts": {
     "changelog": "lerna-changelog",
     "lint:js": "eslint .",
