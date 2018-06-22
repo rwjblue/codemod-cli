@@ -1,5 +1,3 @@
-const { stripIndent } = require('common-tags');
-
 module.exports.command = 'codemod <codemod-name>';
 module.exports.desc = 'Generate a new codemod file';
 
@@ -14,6 +12,7 @@ module.exports.handler = function handler(options) {
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
 
   const fs = require('fs-extra');
+  const { stripIndent } = require('common-tags');
 
   fs.outputFileSync(
     `${codemodDir}/index.js`,
