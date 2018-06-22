@@ -24,7 +24,7 @@ module.exports.handler = function handler(options) {
       script: {
         test: 'codemod-cli test',
       },
-      keywords: [ 'codemod-cli' ],
+      keywords: ['codemod-cli'],
       devDependencies: {
         'codemod-cli': `^${pkg.version}`,
       },
