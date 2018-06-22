@@ -8,7 +8,7 @@
   "scripts": {
     "changelog": "lerna-changelog",
     "lint:js": "eslint .",
-    "test": "qunit --require esm tests/**/*-test.js"
+    "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
     "common-tags": "^1.8.0",
