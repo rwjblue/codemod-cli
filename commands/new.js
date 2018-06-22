@@ -14,14 +14,15 @@ export function handler(options) {
 
   const fs = require('fs-extra');
 
-  fs.ensureDirSync(projectName);
   fs.ensureFileSync(projectName + '/README.md', `# ${projectName}\n`, 'utf8');
-  fs.writeJsonSync(projectName + '/package.json', {
+  fs.outputJsonSync(projectName + '/package.json', {
     name: projectName,
     version: '0.1.0',
     devDependencies: {
       'codemod-cli': `^${pkg.version}`,
     },
+  }, {
+    spaces: 2
   });
   fs.ensureFileSync(projectName + '/transforms/.gitkeep', '', 'utf8');
 }
