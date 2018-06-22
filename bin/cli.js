@@ -26,6 +26,7 @@ function insideProject() {
 
 if (importLocal(__filename) || insideProject()) {
   require('yargs')
+    .locale('en')
     .commandDir('../commands/local')
     .demandCommand()
     .help()
@@ -33,6 +34,7 @@ if (importLocal(__filename) || insideProject()) {
     .parse();
 } else {
   require('yargs')
+    .locale('en')
     .commandDir('../commands/global')
     .demandCommand()
     .help()
