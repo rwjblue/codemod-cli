@@ -1,8 +1,8 @@
-export const command = 'codemod <name>';
+export const command = 'codemod <codemod-name>';
 export const desc = 'Generate a new codemod file';
 
 export function builder(yargs) {
-  yargs.positional('name', {
+  yargs.positional('codemod-name', {
     describe: 'the name of the codemod to generate',
   });
 }
