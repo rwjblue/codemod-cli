@@ -1,8 +1,10 @@
-import path from 'path';
-import { createTempDir } from 'broccoli-test-helper';
-import { wrap } from 'co';
-import execa from 'execa';
-import walkSync from 'walk-sync';
+const path = require('path');
+/*eslint-disable node/no-unpublished-require */
+const createTempDir = require('broccoli-test-helper').createTempDir;
+const wrap = require('co').wrap;
+const execa = require('execa');
+const walkSync = require('walk-sync');
+/*eslint-enable*/
 
 const EXECUTABLE_PATH = path.join(__dirname, '..', 'bin', 'cli.js');
 const ROOT = process.cwd();
@@ -76,6 +78,7 @@ QUnit.module('codemod-cli', function(hooks) {
             'main/',
             'main/README.md',
             'main/index.js',
+            'main/test.js',
           ]);
         })
       );
@@ -98,10 +101,11 @@ QUnit.module('codemod-cli', function(hooks) {
             '.gitkeep',
             'main/',
             'main/README.md',
-            'main/__test_fixtures__/',
-            'main/__test_fixtures__/this-dot-owner.input.js',
-            'main/__test_fixtures__/this-dot-owner.output.js',
+            'main/__testfixtures__/',
+            'main/__testfixtures__/this-dot-owner.input.js',
+            'main/__testfixtures__/this-dot-owner.output.js',
             'main/index.js',
+            'main/test.js',
           ]);
         })
       );
