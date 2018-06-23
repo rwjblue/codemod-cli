@@ -1,4 +1,5 @@
 module.exports.command = 'test';
+module.exports.aliases = ['t'];
 module.exports.desc = 'Run your projects tests';
 
 module.exports.builder = function builder() {};
