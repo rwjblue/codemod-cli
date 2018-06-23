@@ -42,7 +42,7 @@ codemod-cli generate fixture <name of codemod> <name of fixture>
 ```
 
 This sets up two new files in `transforms/<name of codemod>/__testfixtures__/` using the fixture name
-you peovided. These fixtures are used by the testing harness to verify thst your codemod is working properly.
+you provided. These fixtures are used by the testing harness to verify that your codemod is working properly.
 
 Once you have tweaked your codemod and its fixtures to your liking, it is time to run your tests:
 
