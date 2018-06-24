@@ -77,6 +77,9 @@ QUnit.module('codemod-cli', function(hooks) {
             '.gitkeep',
             'main/',
             'main/README.md',
+            'main/__testfixtures__/',
+            'main/__testfixtures__/basic.input.js',
+            'main/__testfixtures__/basic.output.js',
             'main/index.js',
             'main/test.js',
           ]);
@@ -102,6 +105,8 @@ QUnit.module('codemod-cli', function(hooks) {
             'main/',
             'main/README.md',
             'main/__testfixtures__/',
+            'main/__testfixtures__/basic.input.js',
+            'main/__testfixtures__/basic.output.js',
             'main/__testfixtures__/this-dot-owner.input.js',
             'main/__testfixtures__/this-dot-owner.output.js',
             'main/index.js',

@@ -12,11 +12,10 @@ module.exports.builder = function builder(yargs) {
 };
 
 module.exports.handler = function handler(options) {
-  let { codemodName, fixtureName } = options;
-  let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
-
   const fs = require('fs-extra');
 
+  let { codemodName, fixtureName } = options;
+  let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
   let fixturePath = `${codemodDir}/__testfixtures__/${fixtureName}`;
 
   fs.outputFileSync(`${fixturePath}.input.js`, '');

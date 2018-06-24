@@ -32,10 +32,16 @@ codemod-cli generate codemod <name of codemod>
 ```
 
 This will setup a new jscodeshift codemod within your project at `transforms/<name of codemod>/index.js`
-along with a test harness, README, and fixture directory.
+along with a test harness, README, fixture directory, and an initial set of input/output fixtures.
 
-Now that we have a codemod, we can begin generating fixtures for it. We use fixtures as a convienient
-way to represent the expected output for a given input. To generate a new fixture, run the following:
+Once you have tweaked your codemod and its fixtures to your liking, it is time to run your tests:
+
+```
+codemod-cli test
+```
+
+As you develop your codemod you may need additional fixtures (e.g. to test various combinations of
+inputs). To generate a new fixture, run the following:
 
 ```
 codemod-cli generate fixture <name of codemod> <name of fixture>
@@ -44,11 +50,6 @@ codemod-cli generate fixture <name of codemod> <name of fixture>
 This sets up two new files in `transforms/<name of codemod>/__testfixtures__/` using the fixture name
 you provided. These fixtures are used by the testing harness to verify that your codemod is working properly.
 
-Once you have tweaked your codemod and its fixtures to your liking, it is time to run your tests:
-
-```
-codemod-cli test
-```
 
 Contributing
 ------------------------------------------------------------------------------
