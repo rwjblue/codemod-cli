@@ -27,6 +27,7 @@ module.exports.handler = function handler(options) {
       keywords: ['codemod-cli'],
       devDependencies: {
         'codemod-cli': `^${pkg.version}`,
+        jest: pkg.devDependencies.jest,
       },
     },
     {

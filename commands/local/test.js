@@ -19,5 +19,7 @@ module.exports.builder = function builder(yargs) {
 };
 
 module.exports.handler = function handler() {
-  require('jest').run();
+  const importCwd = require('import-cwd');
+
+  importCwd('jest').run();
 };
