@@ -8,11 +8,12 @@ module.exports.builder = function builder(yargs) {
 };
 
 module.exports.handler = function handler(options) {
-  let { codemodName } = options;
-  let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
-
   const fs = require('fs-extra');
   const { stripIndent } = require('common-tags');
+  const generateFixture = require('./fixture').handler;
+
+  let { codemodName } = options;
+  let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
 
   fs.outputFileSync(
     `${codemodDir}/index.js`,
@@ -48,4 +49,6 @@ module.exports.handler = function handler(options) {
     'utf8'
   );
   fs.outputFileSync(`${codemodDir}/README.md`, `# ${codemodName}\n`, 'utf8');
+
+  generateFixture({ codemodName, fixtureName: 'basic' });
 };
