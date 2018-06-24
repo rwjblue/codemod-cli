@@ -13,6 +13,7 @@ module.exports.handler = function handler(options) {
   let { projectName } = options;
 
   const fs = require('fs-extra');
+  const { stripIndent } = require('common-tags');
   const pkg = require('../../package.json');
 
   fs.outputFileSync(projectName + '/README.md', `# ${projectName}\n`, 'utf8');
@@ -21,7 +22,7 @@ module.exports.handler = function handler(options) {
     {
       name: projectName,
       version: '0.1.0',
-      script: {
+      scripts: {
         test: 'codemod-cli test',
       },
       keywords: ['codemod-cli'],
@@ -33,6 +34,31 @@ module.exports.handler = function handler(options) {
     {
       spaces: 2,
     }
+  );
+  fs.outputFileSync(
+    projectName + '/.travis.yml',
+    stripIndent`
+      ---
+      language: node_js
+      node_js:
+        - "6"
+
+      sudo: false
+      dist: trusty
+
+      cache:
+        yarn: true
+
+      before_install:
+        - curl -o- -L https://yarnpkg.com/install.sh | bash
+        - export PATH=$HOME/.yarn/bin:$PATH
+
+      install:
+        - yarn install
+
+      script:
+        - yarn test
+    `
   );
   fs.ensureFileSync(projectName + '/transforms/.gitkeep');
 };
