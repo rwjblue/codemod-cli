@@ -9,6 +9,13 @@ dist: trusty
 cache:
   yarn: true
 
+
+branches:
+  only:
+    - master
+    # npm version tags
+    - /^v\d+\.\d+\.\d+/
+
 stages:
   - test
   - additional tests
