@@ -1,32 +1,53 @@
 const fs = require('fs-extra');
 const path = require('path');
-/*eslint-disable node/no-unpublished-require */
 const createTempDir = require('broccoli-test-helper').createTempDir;
 const wrap = require('co').wrap;
 const execa = require('execa');
 const walkSync = require('walk-sync');
-/*eslint-enable*/
 
 const PROJECT_ROOT = path.join(__dirname, '..');
 const EXECUTABLE_PATH = path.join(PROJECT_ROOT, 'bin', 'cli.js');
+const CodemodCLI = require('../src');
 const ROOT = process.cwd();
 
 QUnit.module('codemod-cli', function(hooks) {
-  let input, output;
+  let codemodProject;
+
+  function setupProject(hooks) {
+    let sharedProject;
+
+    hooks.before(
+      wrap(function*() {
+        sharedProject = yield createTempDir();
+
+        process.chdir(sharedProject.path());
+        yield execa(EXECUTABLE_PATH, ['new', 'test-project']);
+
+        process.chdir(ROOT);
+      })
+    );
+
+    hooks.beforeEach(function() {
+      codemodProject.copy(sharedProject.path('test-project'));
+
+      // setup required dependencies in the project
+      fs.ensureDirSync(`${codemodProject.path()}/node_modules`);
+      fs.symlinkSync(`${ROOT}/node_modules/jest`, `${codemodProject.path()}/node_modules/jest`);
+      fs.symlinkSync(PROJECT_ROOT, `${codemodProject.path()}/node_modules/codemod-cli`);
+    });
+  }
 
   hooks.beforeEach(
     wrap(function*() {
-      input = yield createTempDir();
-      output = yield createTempDir();
+      codemodProject = yield createTempDir();
 
-      process.chdir(input.path());
+      process.chdir(codemodProject.path());
     })
   );
 
   hooks.afterEach(
     wrap(function*() {
-      yield input.dispose();
-      yield output.dispose();
+      yield codemodProject.dispose();
 
       process.chdir(ROOT);
     })
@@ -39,10 +60,12 @@ QUnit.module('codemod-cli', function(hooks) {
         let result = yield execa(EXECUTABLE_PATH, ['new', 'ember-qunit-codemod']);
 
         assert.equal(result.code, 0, 'exited with zero');
-        assert.deepEqual(walkSync(input.path()), [
+        assert.deepEqual(walkSync(codemodProject.path()), [
           'ember-qunit-codemod/',
           'ember-qunit-codemod/.travis.yml',
           'ember-qunit-codemod/README.md',
+          'ember-qunit-codemod/bin/',
+          'ember-qunit-codemod/bin/cli.js',
           'ember-qunit-codemod/package.json',
           'ember-qunit-codemod/transforms/',
           'ember-qunit-codemod/transforms/.gitkeep',
@@ -52,27 +75,7 @@ QUnit.module('codemod-cli', function(hooks) {
   });
 
   QUnit.module('generate', function(hooks) {
-    let project;
-
-    hooks.before(
-      wrap(function*() {
-        project = yield createTempDir();
-
-        process.chdir(project.path());
-        yield execa(EXECUTABLE_PATH, ['new', 'test-project']);
-
-        process.chdir(ROOT);
-      })
-    );
-
-    hooks.beforeEach(function() {
-      input.copy(project.path('test-project'));
-
-      // setup required dependencies in the project
-      fs.ensureDirSync(`${input.path()}/node_modules`);
-      fs.symlinkSync(`${ROOT}/node_modules/jest`, `${input.path()}/node_modules/jest`);
-      fs.symlinkSync(PROJECT_ROOT, `${input.path()}/node_modules/codemod-cli`);
-    });
+    setupProject(hooks);
 
     QUnit.module('codemod', function() {
       QUnit.test(
@@ -81,7 +84,7 @@ QUnit.module('codemod-cli', function(hooks) {
           let result = yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
           assert.equal(result.code, 0, 'exited with zero');
-          assert.deepEqual(walkSync(input.path('transforms')), [
+          assert.deepEqual(walkSync(codemodProject.path('transforms')), [
             '.gitkeep',
             'main/',
             'main/README.md',
@@ -108,7 +111,7 @@ QUnit.module('codemod-cli', function(hooks) {
           ]);
 
           assert.equal(result.code, 0, 'exited with zero');
-          assert.deepEqual(walkSync(input.path('transforms')), [
+          assert.deepEqual(walkSync(codemodProject.path('transforms')), [
             '.gitkeep',
             'main/',
             'main/README.md',
@@ -142,7 +145,7 @@ QUnit.module('codemod-cli', function(hooks) {
           yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
           yield execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
 
-          input.write({
+          codemodProject.write({
             transforms: {
               main: {
                 __testfixtures__: {

@@ -10,6 +10,11 @@
     "lint:js": "eslint .",
     "test": "qunit tests/**/*-test.js"
   },
+  "files": [
+    "src",
+    "bin",
+    "commands"
+  ],
   "dependencies": {
     "chalk": "^2.4.1",
     "common-tags": "^1.8.0",
