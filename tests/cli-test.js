@@ -256,17 +256,19 @@ QUnit.module('codemod-cli', function(hooks) {
         wrap(function*(assert) {
           userProject.write({
             foo: {
-              'something.js': 'let blah = bar',
-              'other.js': 'let blah = bar',
+              'something.js': 'let blah = bar;',
+              'other.js': 'let blah = bar;',
+              'otherthing.ts': 'let blah: Map = bar;',
             },
           });
 
-          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.js');
+          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
 
           assert.deepEqual(userProject.read(), {
             foo: {
-              'something.js': 'let halb = rab',
-              'other.js': 'let blah = bar',
+              'something.js': 'let halb = rab;',
+              'other.js': 'let blah = bar;',
+              'otherthing.ts': 'let halb: paM = rab;',
             },
           });
         })

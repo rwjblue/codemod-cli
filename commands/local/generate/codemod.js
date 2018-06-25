@@ -20,15 +20,18 @@ module.exports.handler = function handler(options) {
   fs.outputFileSync(
     `${codemodDir}/index.js`,
     stripIndent`
+      const { getParser } = require('codemod-cli').jscodeshift;
+
       module.exports = function transformer(file, api) {
-        const j = api.jscodeshift;
+        const j = getParser(api);
 
         return j(file.source)
           .find(j.Identifier)
           .forEach(path => {
-            j(path).replaceWith(
-              j.identifier(path.node.name.split('').reverse().join(''))
-            );
+            path.node.name = path.node.name
+              .split('')
+              .reverse()
+              .join('');
           })
           .toSource();
       }
