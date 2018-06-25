@@ -36,6 +36,11 @@ module.exports.handler = function handler(options) {
       ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
       \`\`\`
 
+      ## Transforms
+
+      <!--TRANSFORMS_TABLE_START-->
+      <!--TRANSFORMS_TABLE_END-->
+
       ## Contributing
 
       ### Installation
