@@ -38,8 +38,8 @@ module.exports.handler = function handler(options) {
 
       ## Transforms
 
-      <!--TRANSFORMS_TABLE_START-->
-      <!--TRANSFORMS_TABLE_END-->
+      <!--TRANSFORMS_START-->
+      <!--TRANSFORMS_END-->
 
       ## Contributing
 

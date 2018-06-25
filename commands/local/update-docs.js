@@ -1,10 +1,10 @@
 module.exports.command = 'update-docs';
 module.exports.desc = 'Update the project README with current list of transforms';
 
-module.exports.handler = function handler() {
+function updateProjectREADME() {
   const fs = require('fs-extra');
 
-  let TRANSFORMS_PLACE_HOLDER = /<!--TRANSFORMS_TABLE_START-->[\s\S]*<!--TRANSFORMS_TABLE_END-->/;
+  let TRANSFORMS_PLACE_HOLDER = /<!--TRANSFORMS_START-->[\s\S]*<!--TRANSFORMS_END-->/;
 
   let transforms = fs
     .readdirSync('transforms')
@@ -20,7 +20,68 @@ module.exports.handler = function handler() {
       .readFileSync('README.md', 'utf8')
       .replace(
         TRANSFORMS_PLACE_HOLDER,
-        `<!--TRANSFORMS_TABLE_START-->\n${readmeContent}\n<!--TRANSFORMS_TABLE_END-->`
+        `<!--TRANSFORMS_START-->\n${readmeContent}\n<!--TRANSFORMS_END-->`
       )
   );
+}
+
+function updateTransformREADME(transformName) {
+  const fs = require('fs-extra');
+  const path = require('path');
+
+  let toc = [];
+  let details = [];
+
+  let fixtureDir = `transforms/${transformName}/__testfixtures__`;
+
+  fs.readdirSync(fixtureDir)
+    .filter(filename => /\.input$/.test(path.basename(filename, path.extname(filename))))
+    .forEach(filename => {
+      let extension = path.extname(filename);
+      let testName = filename.replace(`.input${extension}`, '');
+      let inputPath = path.join(fixtureDir, `${testName}.input${extension}`);
+      let outputPath = path.join(fixtureDir, `${testName}.output${extension}`);
+
+      toc.push(`* [${testName}](#${testName})`);
+      details.push(
+        '---',
+        `<a id="${testName}"></a>`,
+        `**Input** (<small>[${testName}.input${extension}](${inputPath})</small>):`,
+        fs.readFileSync(inputPath),
+        `**Output** (<small>[${testName}.input${extension}](${outputPath})</small>):`,
+        fs.readFileSync(outputPath)
+      );
+    });
+
+  let transformREADMEPath = `transforms/${transformName}/README.md`;
+
+  let FIXTURES_TOC_PLACE_HOLDER = /<!--FIXTURES_TOC_START-->[\s\S]*<!--FIXTURES_TOC_END-->/;
+  let FIXTURES_CONTENTS_PLACE_HOLDER = /<!--FIXTURES_CONTENT_START-->[\s\S]*<!--FIXTURES_CONTENT_END-->/;
+
+  fs.writeFileSync(
+    transformREADMEPath,
+    fs
+      .readFileSync(transformREADMEPath, 'utf8')
+      .replace(
+        FIXTURES_TOC_PLACE_HOLDER,
+        `<!--FIXTURES_TOC_START-->\n${toc.join('\n')}\n<!--FIXTURES_TOC_END-->`
+      )
+      .replace(
+        FIXTURES_CONTENTS_PLACE_HOLDER,
+        `<!--FIXTURES_CONTENTS_START-->\n${details.join('\n')}\n<!--FIXTURES_CONTENTS_END-->`
+      )
+  );
+}
+
+function updateTransformREADMEs() {
+  const fs = require('fs-extra');
+
+  fs.readdirSync('transforms')
+    .filter(file => fs.lstatSync(`transforms/${file}`).isDirectory())
+    .forEach(updateTransformREADME);
+}
+
+module.exports.handler = function handler() {
+  updateProjectREADME();
+  updateTransformREADMEs();
 };
