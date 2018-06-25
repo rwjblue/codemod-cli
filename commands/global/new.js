@@ -25,9 +25,12 @@ module.exports.handler = function handler(options) {
       scripts: {
         test: 'codemod-cli test',
       },
+      bin: './bin/cli.js',
       keywords: ['codemod-cli'],
-      devDependencies: {
+      dependencies: {
         'codemod-cli': `^${pkg.version}`,
+      },
+      devDependencies: {
         jest: pkg.devDependencies.jest,
       },
     },
@@ -59,6 +62,23 @@ module.exports.handler = function handler(options) {
       script:
         - yarn test
     `
+  );
+  fs.outputFileSync(
+    projectName + '/bin/cli.js',
+    stripIndent`
+      #!/usr/bin/env node
+      'use strict';
+
+      require('codemod-cli').runTransform(
+        __dirname,
+        process.argv[2]       /* transform name */,
+        process.argv.slice(2) /* paths or globs */
+      )
+    `,
+    {
+      encoding: 'utf8',
+      mode: 0o755 /* -rwxr-xr-x */,
+    }
   );
   fs.ensureFileSync(projectName + '/transforms/.gitkeep');
 };

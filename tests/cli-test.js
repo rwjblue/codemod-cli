@@ -165,4 +165,47 @@ QUnit.module('codemod-cli', function(hooks) {
       );
     });
   });
+
+  QUnit.module('programmatic API', function(hooks) {
+    setupProject(hooks);
+
+    QUnit.module('runTransform', function(hooks) {
+      let userProject;
+
+      hooks.beforeEach(
+        wrap(function*() {
+          // includes simple identifier reverser
+          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+
+          userProject = yield createTempDir();
+          process.chdir(userProject.path());
+        })
+      );
+
+      hooks.afterEach(function() {
+        return userProject.dispose();
+      });
+
+      QUnit.test(
+        'runs transform',
+        wrap(function*(assert) {
+          userProject.write({
+            foo: {
+              'something.js': 'let blah = bar',
+              'other.js': 'let blah = bar',
+            },
+          });
+
+          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.js');
+
+          assert.deepEqual(userProject.read(), {
+            foo: {
+              'something.js': 'let halb = rab',
+              'other.js': 'let blah = bar',
+            },
+          });
+        })
+      );
+    });
+  });
 });
