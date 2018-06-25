@@ -50,6 +50,12 @@ codemod-cli generate fixture <name of codemod> <name of fixture>
 This sets up two new files in `transforms/<name of codemod>/__testfixtures__/` using the fixture name
 you provided. These fixtures are used by the testing harness to verify that your codemod is working properly.
 
+Once you have things just how you like them with your new codemod (and your tests are passing :wink:) you
+can update your project's README and your transforms README via:
+
+```
+codemod-cli update-docs
+```
 
 Contributing
 ------------------------------------------------------------------------------

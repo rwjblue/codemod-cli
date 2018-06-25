@@ -34,6 +34,12 @@ function updateTransformREADME(transformName) {
 
   let fixtureDir = `transforms/${transformName}/__testfixtures__`;
 
+  if (!fs.existsSync(fixtureDir)) {
+    // project does not include fixtures (perhaps using different testing
+    // setup)
+    return;
+  }
+
   fs.readdirSync(fixtureDir)
     .filter(filename => /\.input$/.test(path.basename(filename, path.extname(filename))))
     .forEach(filename => {

@@ -52,6 +52,10 @@ module.exports.handler = function handler(options) {
       ### Running tests
 
       * \`yarn test\`
+
+      ### Update Documentation
+
+      * \`yarn update-docs\`
     `,
     'utf8'
   );
@@ -62,6 +66,7 @@ module.exports.handler = function handler(options) {
       version: '0.1.0',
       scripts: {
         test: 'codemod-cli test',
+        'update-docs': 'codemod-cli update-docs',
       },
       bin: './bin/cli.js',
       keywords: ['codemod-cli'],
