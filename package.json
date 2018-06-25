@@ -11,8 +11,11 @@
     "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
+    "chalk": "^2.4.1",
     "common-tags": "^1.8.0",
+    "execa": "^0.10.0",
     "fs-extra": "^6.0.1",
+    "globby": "^8.0.1",
     "import-cwd": "^2.1.0",
     "import-local": "^1.0.0",
     "jscodeshift": "^0.5.1",
@@ -26,7 +29,6 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-prettier": "^2.6.0",
-    "execa": "^0.10.0",
     "jest": "^23.1.0",
     "lerna-changelog": "^0.8.0",
     "prettier": "^1.13.5",
