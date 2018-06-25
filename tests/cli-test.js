@@ -74,6 +74,28 @@ QUnit.module('codemod-cli', function(hooks) {
     );
   });
 
+  QUnit.module('update-docs', function(hooks) {
+    setupProject(hooks);
+
+    QUnit.test(
+      'updates top-level README with links to transform READMEs',
+      wrap(function*(assert) {
+        codemodProject.write({
+          transforms: {
+            foo: { 'README.md': 'some content' },
+            bar: { 'README.md': 'some content' },
+          },
+        });
+
+        yield execa(EXECUTABLE_PATH, ['update-docs']);
+
+        let README = fs.readFileSync(codemodProject.path('README.md'), 'utf8');
+        assert.ok(README.includes('* [foo](transforms/foo/README.md'), 'foo link');
+        assert.ok(README.includes('* [bar](transforms/bar/README.md'), 'bar link');
+      })
+    );
+  });
+
   QUnit.module('generate', function(hooks) {
     setupProject(hooks);
 

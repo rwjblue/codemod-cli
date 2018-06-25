@@ -10,9 +10,11 @@ module.exports.builder = function builder(yargs) {
 module.exports.handler = function handler(options) {
   const fs = require('fs-extra');
   const { stripIndent } = require('common-tags');
+  const importCwd = require('import-cwd');
   const generateFixture = require('./fixture').handler;
 
   let { codemodName } = options;
+  let projectName = importCwd('./package.json').name;
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
 
   fs.outputFileSync(
@@ -48,7 +50,32 @@ module.exports.handler = function handler(options) {
     `,
     'utf8'
   );
-  fs.outputFileSync(`${codemodDir}/README.md`, `# ${codemodName}\n`, 'utf8');
+  fs.outputFileSync(
+    `${codemodDir}/README.md`,
+    stripIndent`
+      # ${codemodName}\n
+
+      ## Usage
+
+      \`\`\`
+      npx ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
+
+      # or
+
+      yarn global add ${projectName}
+      ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
+      \`\`\`
+
+      ## Input / Output
+
+      <!--FIXTURES_TOC_START-->
+      <!--FIXTURES_TOC_END-->
+
+      <!--FIXTURES_CONTENT_START-->
+      <!--FIXTURES_CONTENT_END-->
+    `,
+    'utf8'
+  );
 
   generateFixture({ codemodName, fixtureName: 'basic' });
 };

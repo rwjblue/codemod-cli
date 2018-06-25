@@ -16,7 +16,49 @@ module.exports.handler = function handler(options) {
   const { stripIndent } = require('common-tags');
   const pkg = require('../../package.json');
 
-  fs.outputFileSync(projectName + '/README.md', `# ${projectName}\n`, 'utf8');
+  fs.outputFileSync(
+    projectName + '/README.md',
+    stripIndent`
+      # ${projectName}\n
+
+      A collection of codemod's for ${projectName}.
+
+      ## Usage
+
+      To run a specific codemod from this project, you would run the following:
+
+      \`\`\`
+      npx ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
+
+      # or
+
+      yarn global add ${projectName}
+      ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
+      \`\`\`
+
+      ## Transforms
+
+      <!--TRANSFORMS_START-->
+      <!--TRANSFORMS_END-->
+
+      ## Contributing
+
+      ### Installation
+
+      * clone the repo
+      * change into the repo directory
+      * \`yarn\`
+
+      ### Running tests
+
+      * \`yarn test\`
+
+      ### Update Documentation
+
+      * \`yarn update-docs\`
+    `,
+    'utf8'
+  );
   fs.outputJsonSync(
     projectName + '/package.json',
     {
@@ -24,6 +66,7 @@ module.exports.handler = function handler(options) {
       version: '0.1.0',
       scripts: {
         test: 'codemod-cli test',
+        'update-docs': 'codemod-cli update-docs',
       },
       bin: './bin/cli.js',
       keywords: ['codemod-cli'],
