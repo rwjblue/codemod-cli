@@ -1,8 +1,14 @@
 {
   "name": "codemod-cli",
   "version": "0.1.0",
+  "description": "a command line tool for generating, testing, and publishing codemods",
   "license": "MIT",
   "author": "Robert Jackson <me@rwjblue.com>",
+  "files": [
+    "src",
+    "bin",
+    "commands"
+  ],
   "main": "src/index.js",
   "bin": "./bin/cli.js",
   "scripts": {
@@ -10,11 +16,6 @@
     "lint:js": "eslint .",
     "test": "qunit tests/**/*-test.js"
   },
-  "files": [
-    "src",
-    "bin",
-    "commands"
-  ],
   "dependencies": {
     "chalk": "^2.4.1",
     "common-tags": "^1.8.0",
