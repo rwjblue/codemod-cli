@@ -53,9 +53,13 @@ function updateTransformREADME(transformName) {
         '---',
         `<a id="${testName}"></a>`,
         `**Input** (<small>[${testName}.input${extension}](${inputPath})</small>):`,
+        '```${extension}',
         fs.readFileSync(inputPath),
+        '```',
         `**Output** (<small>[${testName}.input${extension}](${outputPath})</small>):`,
-        fs.readFileSync(outputPath)
+        '```${extension}',
+        fs.readFileSync(outputPath),
+        '```'
       );
     });
 
