@@ -41,7 +41,6 @@ module.exports.handler = function handler(options) {
       'use strict';
 
       const { runTransformTest } = require('codemod-cli');
-      const transform = require('./index');
 
       runTransformTest({
         type: 'jscodeshift',
