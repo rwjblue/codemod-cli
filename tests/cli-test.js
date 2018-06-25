@@ -188,6 +188,49 @@ QUnit.module('codemod-cli', function(hooks) {
     });
   });
 
+  QUnit.module('generated bin script', function(hooks) {
+    setupProject(hooks);
+
+    let userProject;
+    hooks.beforeEach(
+      wrap(function*() {
+        // fix mode of bin script (lost during sharedProject.copy())
+        fs.chmodSync(codemodProject.path('bin/cli.js'), 0o755);
+
+        // includes simple identifier reverser
+        yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+
+        userProject = yield createTempDir();
+        process.chdir(userProject.path());
+      })
+    );
+
+    hooks.afterEach(function() {
+      return userProject.dispose();
+    });
+
+    QUnit.test(
+      'works with globs',
+      wrap(function*(assert) {
+        userProject.write({
+          foo: {
+            'something.js': 'let blah = bar',
+            'other.js': 'let blah = bar',
+          },
+        });
+
+        yield execa(codemodProject.path('bin/cli.js'), ['main', 'foo/*thing.js']);
+
+        assert.deepEqual(userProject.read(), {
+          foo: {
+            'something.js': 'let halb = rab',
+            'other.js': 'let blah = bar',
+          },
+        });
+      })
+    );
+  });
+
   QUnit.module('programmatic API', function(hooks) {
     setupProject(hooks);
 
