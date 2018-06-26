@@ -51,7 +51,7 @@ function updateTransformREADME(transformName) {
       toc.push(`* [${testName}](#${testName})`);
       details.push(
         '---',
-        `<a id="${testName}">**${testName}}**</a>`,
+        `<a id="${testName}">**${testName}**</a>`,
         '',
         `**Input** (<small>[${testName}.input${extension}](${inputPath})</small>):`,
         '```' + extension.slice(1),
