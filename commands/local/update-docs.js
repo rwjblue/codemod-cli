@@ -51,13 +51,15 @@ function updateTransformREADME(transformName) {
       toc.push(`* [${testName}](#${testName})`);
       details.push(
         '---',
-        `<a id="${testName}"></a>`,
+        `<a id="${testName}">**${testName}}**</a>`,
+        '',
         `**Input** (<small>[${testName}.input${extension}](${inputPath})</small>):`,
-        '```${extension}',
+        '```' + extension.slice(1),
         fs.readFileSync(inputPath),
         '```',
+        '',
         `**Output** (<small>[${testName}.input${extension}](${outputPath})</small>):`,
-        '```${extension}',
+        '```' + extension.slice(1),
         fs.readFileSync(outputPath),
         '```'
       );
@@ -66,7 +68,7 @@ function updateTransformREADME(transformName) {
   let transformREADMEPath = `transforms/${transformName}/README.md`;
 
   let FIXTURES_TOC_PLACE_HOLDER = /<!--FIXTURES_TOC_START-->[\s\S]*<!--FIXTURES_TOC_END-->/;
-  let FIXTURES_CONTENTS_PLACE_HOLDER = /<!--FIXTURES_CONTENT_START-->[\s\S]*<!--FIXTURES_CONTENT_END-->/;
+  let FIXTURES_CONTENT_PLACE_HOLDER = /<!--FIXTURES_CONTENT_START-->[\s\S]*<!--FIXTURES_CONTENT_END-->/;
 
   fs.writeFileSync(
     transformREADMEPath,
@@ -77,8 +79,8 @@ function updateTransformREADME(transformName) {
         `<!--FIXTURES_TOC_START-->\n${toc.join('\n')}\n<!--FIXTURES_TOC_END-->`
       )
       .replace(
-        FIXTURES_CONTENTS_PLACE_HOLDER,
-        `<!--FIXTURES_CONTENTS_START-->\n${details.join('\n')}\n<!--FIXTURES_CONTENTS_END-->`
+        FIXTURES_CONTENT_PLACE_HOLDER,
+        `<!--FIXTURES_CONTENT_START-->\n${details.join('\n')}\n<!--FIXTURE_CONTENT_END-->`
       )
   );
 }
