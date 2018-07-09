@@ -36,7 +36,7 @@ function jscodeshiftTest(options) {
             runInlineTest(
               transform,
               {},
-              { source: fs.readFileSync(inputPath, 'utf8') },
+              { path: inputPath, source: fs.readFileSync(inputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
@@ -45,7 +45,7 @@ function jscodeshiftTest(options) {
             runInlineTest(
               transform,
               {},
-              { source: fs.readFileSync(outputPath, 'utf8') },
+              { path: inputPath, source: fs.readFileSync(outputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
