@@ -185,6 +185,45 @@ QUnit.module('codemod-cli', function(hooks) {
           }
         })
       );
+
+      QUnit.test(
+        'transform should receive a file path in tests',
+        wrap(function*(assert) {
+          const expectedPath = `${codemodProject.path()}/transforms/main/__testfixtures__/basic.input.js`;
+
+          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+
+          codemodProject.write({
+            transforms: {
+              main: {
+                'index.js': `
+                  const { getParser } = require('codemod-cli').jscodeshift;
+
+                  module.exports = function transformer(file, api) {
+                    const j = getParser(api);
+
+                    return j(file.source)
+                    .find(j.Literal)
+                    .forEach(path => {
+                      path.replace(
+                        j.stringLiteral(file.path)
+                      );
+                    })
+                    .toSource();
+                  }
+                `,
+                __testfixtures__: {
+                  'basic.input.js': 'var foo = "foo";',
+                  'basic.output.js': `var foo = "${expectedPath}";`,
+                },
+              },
+            },
+          });
+
+          let result = yield execa(EXECUTABLE_PATH, ['test']);
+          assert.equal(result.code, 0, 'exited with zero');
+        })
+      );
     });
   });
 
