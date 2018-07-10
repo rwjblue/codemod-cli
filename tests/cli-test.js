@@ -189,7 +189,8 @@ QUnit.module('codemod-cli', function(hooks) {
       QUnit.test(
         'transform should receive a file path in tests',
         wrap(function*(assert) {
-          const expectedPath = `${codemodProject.path()}/transforms/main/__testfixtures__/basic.input.js`;
+          const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
+          const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/basic.input.js`;
 
           yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
