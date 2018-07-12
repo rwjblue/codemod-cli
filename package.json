@@ -2,6 +2,18 @@
   "name": "codemod-cli",
   "version": "0.2.4",
   "description": "a command line tool for generating, testing, and publishing codemods",
+  "keywords": [
+    "cli",
+    "codemod"
+  ],
+  "homepage": "https://github.com/rwjblue/codemod-cli#readme",
+  "bugs": {
+    "url": "https://github.com/rwjblue/codemod-cli/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rwjblue/codemod-cli.git"
+  },
   "license": "MIT",
   "author": "Robert Jackson <me@rwjblue.com>",
   "files": [
@@ -10,7 +22,12 @@
     "commands"
   ],
   "main": "src/index.js",
-  "bin": "./bin/cli.js",
+  "bin": {
+    "codemod-cli": "./bin/cli.js"
+  },
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
     "changelog": "lerna-changelog",
     "lint:js": "eslint .",
