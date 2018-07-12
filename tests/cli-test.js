@@ -313,6 +313,106 @@ QUnit.module('codemod-cli', function(hooks) {
           });
         })
       );
+
+      QUnit.test(
+        'runs transform against class syntax',
+        wrap(function*(assert) {
+          userProject.write({
+            foo: {
+              'something.js': `
+                class Blah {
+                  blah = bar;
+                }
+              `,
+              'other.js': `
+                class Blah {
+                  blah = bar;
+                }
+              `,
+              'otherthing.ts': `
+                class Blah {
+                  blah: Map = bar;
+                }
+              `,
+            },
+          });
+
+          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
+
+          assert.deepEqual(userProject.read(), {
+            foo: {
+              'something.js': `
+                class halB {
+                  halb = rab;
+                }
+              `,
+              'other.js': `
+                class Blah {
+                  blah = bar;
+                }
+              `,
+              'otherthing.ts': `
+                class halB {
+                  halb: paM = rab;
+                }
+              `,
+            },
+          });
+        })
+      );
+
+      QUnit.test(
+        'runs transform against decorator syntax',
+        wrap(function*(assert) {
+          userProject.write({
+            foo: {
+              'something.js': `
+                class Blah {
+                  @bar
+                  blah() {}
+                }
+              `,
+              'other.js': `
+                class Blah {
+                  @bar
+                  blah() {}
+                }
+              `,
+              'otherthing.ts': `
+                class Blah {
+                  @bar
+                  blah() {}
+                }
+              `,
+            },
+          });
+
+          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
+
+          assert.deepEqual(userProject.read(), {
+            foo: {
+              'something.js': `
+                class halB {
+                  @rab
+                  halb() {}
+                }
+              `,
+              'other.js': `
+                class Blah {
+                  @bar
+                  blah() {}
+                }
+              `,
+              'otherthing.ts': `
+                class halB {
+                  @rab
+                  halb() {}
+                }
+              `,
+            },
+          });
+        })
+      );
     });
   });
 });
