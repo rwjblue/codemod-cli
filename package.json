@@ -1,6 +1,6 @@
 {
   "name": "codemod-cli",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "a command line tool for generating, testing, and publishing codemods",
   "license": "MIT",
   "author": "Robert Jackson <me@rwjblue.com>",
