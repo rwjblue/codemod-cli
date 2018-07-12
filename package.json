@@ -17,7 +17,7 @@
     "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
-    "@babel/parser": "^7.0.0-beta.51",
+    "@babel/parser": "^7.0.0-beta.53",
     "chalk": "^2.4.1",
     "common-tags": "^1.8.0",
     "execa": "^0.10.0",
