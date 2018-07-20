@@ -36,12 +36,13 @@ function jscodeshiftTest(options) {
         let testName = filename.replace(`.input${extension}`, '');
         let inputPath = path.join(details.fixtureDir, `${testName}.input${extension}`);
         let outputPath = path.join(details.fixtureDir, `${testName}.output${extension}`);
+        let optionsPath = path.join(details.fixtureDir, `${testName}.options.json`);
 
         describe(testName, function() {
           it('transforms correctly', function() {
             runInlineTest(
               transform,
-              {},
+              fs.pathExistsSync(optionsPath) ? JSON.parse(fs.readFileSync(optionsPath)) : {},
               { path: inputPath, source: fs.readFileSync(inputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
@@ -50,7 +51,7 @@ function jscodeshiftTest(options) {
           it('is idempotent', function() {
             runInlineTest(
               transform,
-              {},
+              fs.pathExistsSync(optionsPath) ? JSON.parse(fs.readFileSync(optionsPath)) : {},
               { path: inputPath, source: fs.readFileSync(outputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
