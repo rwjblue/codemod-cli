@@ -1,10 +1,13 @@
 'use strict';
 
-function runTransform(binRoot, transformName, paths) {
+function runTransform(binRoot, transformName, args) {
   const globby = require('globby');
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
+  const { parseTransformArgs } = require('./options-support');
+
+  let { paths, options } = parseTransformArgs(args);
 
   return globby(paths)
     .then(paths => {
@@ -16,6 +19,9 @@ function runTransform(binRoot, transformName, paths) {
 
       return execa(binPath, ['-t', transformPath, '--extensions', 'js,ts', ...paths], {
         stdio: 'inherit',
+        env: {
+          CODEMOD_CLI_ARGS: JSON.stringify(options),
+        },
       });
     })
     .catch(error => {

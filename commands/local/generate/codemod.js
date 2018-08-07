@@ -21,9 +21,11 @@ module.exports.handler = function handler(options) {
     `${codemodDir}/index.js`,
     stripIndent`
       const { getParser } = require('codemod-cli').jscodeshift;
+      const { getOptions } = require('codemod-cli');
 
       module.exports = function transformer(file, api) {
         const j = getParser(api);
+        const options = getOptions();
 
         return j(file.source)
           .find(j.Identifier)

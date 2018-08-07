@@ -189,7 +189,6 @@ QUnit.module('codemod-cli', function(hooks) {
       QUnit.test(
         'transform should receive options from ${name}.options.json',
         wrap(function*(assert) {
-          const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
           const expectedReplacement = 'AAAAHHHHHH';
 
           yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
@@ -199,10 +198,10 @@ QUnit.module('codemod-cli', function(hooks) {
               main: {
                 'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
-
-                  module.exports = function transformer(file, api, options) {
+                  const { getOptions } = require('codemod-cli');
+                  module.exports = function transformer(file, api) {
+                    const options = getOptions();
                     const j = getParser(api);
-
                     return j(file.source)
                     .find(j.Literal)
                     .forEach(path => {
@@ -336,10 +335,7 @@ QUnit.module('codemod-cli', function(hooks) {
       'works with globs',
       wrap(function*(assert) {
         userProject.write({
-          foo: {
-            'something.js': 'let blah = bar',
-            'other.js': 'let blah = bar',
-          },
+          foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
         });
 
         yield execa(codemodProject.path('bin/cli.js'), ['main', 'foo/*thing.js']);
@@ -393,6 +389,49 @@ QUnit.module('codemod-cli', function(hooks) {
               'other.js': 'let blah = bar;',
               'otherthing.ts': 'let halb: paM = rab;',
             },
+          });
+        })
+      );
+
+      QUnit.test(
+        'runs transform with options',
+        wrap(function*(assert) {
+          codemodProject.write({
+            transforms: {
+              main: {
+                'index.js': `
+                  const { getParser } = require('codemod-cli').jscodeshift;
+                  const { getOptions } = require('codemod-cli');
+                  module.exports = function transformer(file, api) {
+                    const options = getOptions();
+                    const j = getParser(api);
+                    return j(file.source)
+                    .find(j.Literal)
+                    .forEach(path => {
+                      path.replace(
+                        j.stringLiteral(options.biz + options.baz)
+                      );
+                    })
+                    .toSource();
+                  }
+              `,
+              },
+            },
+          });
+          userProject.write({
+            foo: { 'something.js': `let blah = "bar";` },
+          });
+
+          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
+            '--biz',
+            'A',
+            '--baz',
+            'B',
+            'foo/*ing.[jt]s',
+          ]);
+
+          assert.deepEqual(userProject.read(), {
+            foo: { 'something.js': `let blah = "AB";` },
           });
         })
       );
