@@ -5,6 +5,7 @@
 const { runInlineTest } = require('jscodeshift/dist/testUtils');
 const fs = require('fs-extra');
 const path = require('path');
+const globby = require('globby');
 
 function transformDetails(options) {
   let root = process.cwd() + `/transforms/${options.name}/`;
@@ -23,8 +24,13 @@ function jscodeshiftTest(options) {
   let transform = require(details.transformPath);
 
   describe(details.name, function() {
-    fs.readdirSync(details.fixtureDir)
-      .filter(filename => /\.input$/.test(path.basename(filename, path.extname(filename))))
+    globby
+      .sync('**/*.input.*', {
+        cwd: details.fixtureDir,
+        absolute: true,
+        transform: entry =>
+          entry.slice(entry.indexOf('__testfixtures__') + '__testfixtures__'.length + 1),
+      })
       .forEach(filename => {
         let extension = path.extname(filename);
         let testName = filename.replace(`.input${extension}`, '');
