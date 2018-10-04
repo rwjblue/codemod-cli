@@ -10,7 +10,11 @@ function runTransform(binRoot, transformName, paths) {
     .then(paths => {
       let transformPath = path.join(binRoot, '..', 'transforms', transformName, 'index.js');
 
-      return execa('jscodeshift', ['-t', transformPath, '--extensions', 'js,ts', ...paths], {
+      let jscodeshiftPkg = require('jscodeshift/package');
+      let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
+      let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
+
+      return execa(binPath, ['-t', transformPath, '--extensions', 'js,ts', ...paths], {
         stdio: 'inherit',
       });
     })
