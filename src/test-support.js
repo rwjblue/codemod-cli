@@ -1,6 +1,6 @@
 'use strict';
 
-/* global it, describe */
+/* global it, describe, beforeEach, afterEach */
 
 const { runInlineTest } = require('jscodeshift/dist/testUtils');
 const fs = require('fs-extra');
@@ -36,8 +36,18 @@ function jscodeshiftTest(options) {
         let testName = filename.replace(`.input${extension}`, '');
         let inputPath = path.join(details.fixtureDir, `${testName}.input${extension}`);
         let outputPath = path.join(details.fixtureDir, `${testName}.output${extension}`);
+        let optionsPath = path.join(details.fixtureDir, `${testName}.options.json`);
+        let options = fs.pathExistsSync(optionsPath) ? fs.readFileSync(optionsPath) : '{}';
 
         describe(testName, function() {
+          beforeEach(function() {
+            process.env.CODEMOD_CLI_ARGS = options;
+          });
+
+          afterEach(function() {
+            process.env.CODEMOD_CLI_ARGS = '';
+          });
+
           it('transforms correctly', function() {
             runInlineTest(
               transform,
