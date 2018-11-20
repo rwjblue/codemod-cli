@@ -58,7 +58,7 @@ function updateTransformREADME(transformName) {
         fs.readFileSync(inputPath),
         '```',
         '',
-        `**Output** (<small>[${testName}.input${extension}](${outputPath})</small>):`,
+        `**Output** (<small>[${testName}.output${extension}](${outputPath})</small>):`,
         '```' + extension.slice(1),
         fs.readFileSync(outputPath),
         '```'
