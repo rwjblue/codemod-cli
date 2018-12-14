@@ -68,7 +68,7 @@ function updateTransformREADME(transformName) {
   let transformREADMEPath = `transforms/${transformName}/README.md`;
 
   let FIXTURES_TOC_PLACE_HOLDER = /<!--FIXTURES_TOC_START-->[\s\S]*<!--FIXTURES_TOC_END-->/;
-  let FIXTURES_CONTENT_PLACE_HOLDER = /<!--FIXTURES_CONTENT_START-->[\s\S]*<!--FIXTURES_CONTENT_END-->/;
+  let FIXTURES_CONTENT_PLACE_HOLDER = /<!--FIXTURES_CONTENT_START-->[\s\S]*<!--FIXTURE[S]?_CONTENT_END-->/;
 
   fs.writeFileSync(
     transformREADMEPath,
@@ -80,7 +80,7 @@ function updateTransformREADME(transformName) {
       )
       .replace(
         FIXTURES_CONTENT_PLACE_HOLDER,
-        `<!--FIXTURES_CONTENT_START-->\n${details.join('\n')}\n<!--FIXTURE_CONTENT_END-->`
+        `<!--FIXTURES_CONTENT_START-->\n${details.join('\n')}\n<!--FIXTURES_CONTENT_END-->`
       )
   );
 }
