@@ -13,7 +13,7 @@ function transformDetails(options) {
   return {
     name: options.name,
     root,
-    transformPath: root + 'index.js',
+    transformPath: root + 'index',
     fixtureDir: root + '__testfixtures__/',
   };
 }
