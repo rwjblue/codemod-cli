@@ -65,7 +65,8 @@ module.exports.handler = function handler(options) {
       name: projectName,
       version: '0.1.0',
       scripts: {
-        test: 'codemod-cli test --coverage',
+        test: 'codemod-cli test',
+        'test:coverage': 'codemod-cli test --coverage',
         'update-docs': 'codemod-cli update-docs',
         coveralls: 'cat ./coverage/lcov.info | node node_modules/.bin/coveralls',
       },
@@ -108,7 +109,7 @@ module.exports.handler = function handler(options) {
         - yarn install
 
       script:
-        - yarn test
+        - yarn test:coverage
 
       after_success:
         - yarn coveralls
