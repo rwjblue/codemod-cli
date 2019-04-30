@@ -1,3 +1,11 @@
+## v0.2.11 (2019-04-30)
+
+#### :rocket: Enhancement
+* [#59](https://github.com/rwjblue/codemod-cli/pull/59) Add coverage statistics setup to new project blueprint ([@rajasegar](https://github.com/rajasegar))
+
+#### Committers: 1
+- Rajasegar Chandran ([@rajasegar](https://github.com/rajasegar))
+
 ## v0.2.10 (2019-02-15)
 
 #### :rocket: Enhancement
