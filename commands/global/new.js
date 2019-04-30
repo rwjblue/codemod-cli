@@ -66,7 +66,9 @@ module.exports.handler = function handler(options) {
       version: '0.1.0',
       scripts: {
         test: 'codemod-cli test',
+        'test:coverage': 'codemod-cli test --coverage',
         'update-docs': 'codemod-cli update-docs',
+        coveralls: 'cat ./coverage/lcov.info | node node_modules/.bin/coveralls',
       },
       bin: './bin/cli.js',
       keywords: ['codemod-cli'],
@@ -75,6 +77,7 @@ module.exports.handler = function handler(options) {
       },
       devDependencies: {
         jest: pkg.devDependencies.jest,
+        coveralls: pkg.devDependencies.coveralls,
       },
       jest: {
         testEnvironment: 'node',
@@ -106,7 +109,10 @@ module.exports.handler = function handler(options) {
         - yarn install
 
       script:
-        - yarn test
+        - yarn test:coverage
+
+      after_success:
+        - yarn coveralls
     `
   );
   fs.outputFileSync(
