@@ -1,6 +1,6 @@
 {
   "name": "codemod-cli",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "a command line tool for generating, testing, and publishing codemods",
   "keywords": [
     "cli",
