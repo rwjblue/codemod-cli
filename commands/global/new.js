@@ -93,7 +93,7 @@ module.exports.handler = function handler(options) {
       ---
       language: node_js
       node_js:
-        - "6"
+        - "8"
 
       sudo: false
       dist: trusty
