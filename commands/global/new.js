@@ -79,6 +79,7 @@ module.exports.handler = function handler(options) {
         jest: pkg.devDependencies.jest,
         coveralls: pkg.devDependencies.coveralls,
       },
+      engines: pkg.engines,
       jest: {
         testEnvironment: 'node',
       },
@@ -93,7 +94,7 @@ module.exports.handler = function handler(options) {
       ---
       language: node_js
       node_js:
-        - "6"
+        - "8"
 
       sudo: false
       dist: trusty

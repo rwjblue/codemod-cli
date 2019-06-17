@@ -1,7 +1,7 @@
 ---
 language: node_js
 node_js:
-  - "10"
+  - "12"
 
 sudo: false
 dist: trusty
@@ -33,13 +33,13 @@ jobs:
 
     - stage: additional tests
       env: NAME=floating dependencies
-      install: yarn install --no-lockfile --non-interactive --ignore-engines
+      install: yarn install --no-lockfile --non-interactive
       script: yarn test
 
-    - env: NAME=Node_6
-      node_js: "6"
+    - name: "Node 10"
+      node_js: "10"
 
-    - env: NAME=Node_8
+    - name: "Node 8"
       node_js: "8"
 
 
@@ -48,7 +48,7 @@ before_install:
   - export PATH=$HOME/.yarn/bin:$PATH
 
 install:
-  - yarn install --ignore-engines
+  - yarn install
 
 script:
   - yarn test

@@ -1,7 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const createTempDir = require('broccoli-test-helper').createTempDir;
-const wrap = require('co').wrap;
 const execa = require('execa');
 const walkSync = require('walk-sync');
 
@@ -16,16 +15,14 @@ QUnit.module('codemod-cli', function(hooks) {
   function setupProject(hooks) {
     let sharedProject;
 
-    hooks.before(
-      wrap(function*() {
-        sharedProject = yield createTempDir();
+    hooks.before(async function() {
+      sharedProject = await createTempDir();
 
-        process.chdir(sharedProject.path());
-        yield execa(EXECUTABLE_PATH, ['new', 'test-project']);
+      process.chdir(sharedProject.path());
+      await execa(EXECUTABLE_PATH, ['new', 'test-project']);
 
-        process.chdir(ROOT);
-      })
-    );
+      process.chdir(ROOT);
+    });
 
     hooks.beforeEach(function() {
       codemodProject.copy(sharedProject.path('test-project'));
@@ -37,167 +34,145 @@ QUnit.module('codemod-cli', function(hooks) {
     });
   }
 
-  hooks.beforeEach(
-    wrap(function*() {
-      codemodProject = yield createTempDir();
+  hooks.beforeEach(async function() {
+    codemodProject = await createTempDir();
 
-      process.chdir(codemodProject.path());
-    })
-  );
+    process.chdir(codemodProject.path());
+  });
 
-  hooks.afterEach(
-    wrap(function*() {
-      yield codemodProject.dispose();
+  hooks.afterEach(async function() {
+    await codemodProject.dispose();
 
-      process.chdir(ROOT);
-    })
-  );
+    process.chdir(ROOT);
+  });
 
   QUnit.module('new', function() {
-    QUnit.test(
-      'should generate a basic project structure',
-      wrap(function*(assert) {
-        let result = yield execa(EXECUTABLE_PATH, ['new', 'ember-qunit-codemod']);
+    QUnit.test('should generate a basic project structure', async function(assert) {
+      let result = await execa(EXECUTABLE_PATH, ['new', 'ember-qunit-codemod']);
 
-        assert.equal(result.code, 0, 'exited with zero');
-        assert.deepEqual(walkSync(codemodProject.path()), [
-          'ember-qunit-codemod/',
-          'ember-qunit-codemod/.gitignore',
-          'ember-qunit-codemod/.travis.yml',
-          'ember-qunit-codemod/README.md',
-          'ember-qunit-codemod/bin/',
-          'ember-qunit-codemod/bin/cli.js',
-          'ember-qunit-codemod/package.json',
-          'ember-qunit-codemod/transforms/',
-          'ember-qunit-codemod/transforms/.gitkeep',
-        ]);
-      })
-    );
+      assert.equal(result.code, 0, 'exited with zero');
+      assert.deepEqual(walkSync(codemodProject.path()), [
+        'ember-qunit-codemod/',
+        'ember-qunit-codemod/.gitignore',
+        'ember-qunit-codemod/.travis.yml',
+        'ember-qunit-codemod/README.md',
+        'ember-qunit-codemod/bin/',
+        'ember-qunit-codemod/bin/cli.js',
+        'ember-qunit-codemod/package.json',
+        'ember-qunit-codemod/transforms/',
+        'ember-qunit-codemod/transforms/.gitkeep',
+      ]);
+    });
   });
 
   QUnit.module('update-docs', function(hooks) {
     setupProject(hooks);
 
-    QUnit.test(
-      'updates top-level README with links to transform READMEs',
-      wrap(function*(assert) {
-        codemodProject.write({
-          transforms: {
-            foo: { 'README.md': 'some content' },
-            bar: { 'README.md': 'some content' },
-          },
-        });
+    QUnit.test('updates top-level README with links to transform READMEs', async function(assert) {
+      codemodProject.write({
+        transforms: {
+          foo: { 'README.md': 'some content' },
+          bar: { 'README.md': 'some content' },
+        },
+      });
 
-        yield execa(EXECUTABLE_PATH, ['update-docs']);
+      await execa(EXECUTABLE_PATH, ['update-docs']);
 
-        let README = fs.readFileSync(codemodProject.path('README.md'), 'utf8');
-        assert.ok(README.includes('* [foo](transforms/foo/README.md'), 'foo link');
-        assert.ok(README.includes('* [bar](transforms/bar/README.md'), 'bar link');
-      })
-    );
+      let README = fs.readFileSync(codemodProject.path('README.md'), 'utf8');
+      assert.ok(README.includes('* [foo](transforms/foo/README.md'), 'foo link');
+      assert.ok(README.includes('* [bar](transforms/bar/README.md'), 'bar link');
+    });
   });
 
   QUnit.module('generate', function(hooks) {
     setupProject(hooks);
 
     QUnit.module('codemod', function() {
-      QUnit.test(
-        'should generate a codemod',
-        wrap(function*(assert) {
-          let result = yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+      QUnit.test('should generate a codemod', async function(assert) {
+        let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          assert.equal(result.code, 0, 'exited with zero');
-          assert.deepEqual(walkSync(codemodProject.path('transforms')), [
-            '.gitkeep',
-            'main/',
-            'main/README.md',
-            'main/__testfixtures__/',
-            'main/__testfixtures__/basic.input.js',
-            'main/__testfixtures__/basic.output.js',
-            'main/index.js',
-            'main/test.js',
-          ]);
-        })
-      );
+        assert.equal(result.code, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+          '.gitkeep',
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.js',
+          'main/__testfixtures__/basic.output.js',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
     });
 
     QUnit.module('fixture', function() {
-      QUnit.test(
-        'should generate a fixture for the specified codemod',
-        wrap(function*(assert) {
-          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
-          let result = yield execa(EXECUTABLE_PATH, [
-            'generate',
-            'fixture',
-            'main',
-            'this-dot-owner',
-          ]);
+      QUnit.test('should generate a fixture for the specified codemod', async function(assert) {
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        let result = await execa(EXECUTABLE_PATH, [
+          'generate',
+          'fixture',
+          'main',
+          'this-dot-owner',
+        ]);
 
-          assert.equal(result.code, 0, 'exited with zero');
-          assert.deepEqual(walkSync(codemodProject.path('transforms')), [
-            '.gitkeep',
-            'main/',
-            'main/README.md',
-            'main/__testfixtures__/',
-            'main/__testfixtures__/basic.input.js',
-            'main/__testfixtures__/basic.output.js',
-            'main/__testfixtures__/this-dot-owner.input.js',
-            'main/__testfixtures__/this-dot-owner.output.js',
-            'main/index.js',
-            'main/test.js',
-          ]);
-        })
-      );
+        assert.equal(result.code, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+          '.gitkeep',
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.js',
+          'main/__testfixtures__/basic.output.js',
+          'main/__testfixtures__/this-dot-owner.input.js',
+          'main/__testfixtures__/this-dot-owner.output.js',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
     });
 
     QUnit.module('test', function() {
-      QUnit.test(
-        'should pass for a basic project with an empty codemod',
-        wrap(function*(assert) {
-          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
-          yield execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
+      QUnit.test('should pass for a basic project with an empty codemod', async function(assert) {
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
 
-          let result = yield execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.code, 0, 'exited with zero');
-        })
-      );
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.code, 0, 'exited with zero');
+      });
 
-      QUnit.test(
-        'should fail when input and output do not match',
-        wrap(function*(assert) {
-          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
-          yield execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
+      QUnit.test('should fail when input and output do not match', async function(assert) {
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
 
-          codemodProject.write({
-            transforms: {
-              main: {
-                __testfixtures__: {
-                  'basic.input.js': '"starting content";',
-                  'basic.output.js': '"different content";',
-                },
+        codemodProject.write({
+          transforms: {
+            main: {
+              __testfixtures__: {
+                'basic.input.js': '"starting content";',
+                'basic.output.js': '"different content";',
               },
             },
-          });
+          },
+        });
 
-          try {
-            yield execa(EXECUTABLE_PATH, ['test']);
-          } catch (result) {
-            assert.notEqual(result.code, 0, 'exited with non-zero');
-          }
-        })
-      );
+        try {
+          await execa(EXECUTABLE_PATH, ['test']);
+        } catch (result) {
+          assert.notEqual(result.code, 0, 'exited with non-zero');
+        }
+      });
 
-      QUnit.test(
-        'transform should receive options from ${name}.options.json',
-        wrap(function*(assert) {
-          const expectedReplacement = 'AAAAHHHHHH';
+      QUnit.test('transform should receive options from ${name}.options.json', async function(
+        assert
+      ) {
+        const expectedReplacement = 'AAAAHHHHHH';
 
-          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
                   const { getOptions } = require('codemod-cli');
                   module.exports = function transformer(file, api) {
@@ -213,32 +188,29 @@ QUnit.module('codemod-cli', function(hooks) {
                     .toSource();
                   }
                 `,
-                __testfixtures__: {
-                  'basic.input.js': 'var foo = "foo";',
-                  'basic.output.js': `var foo = "${expectedReplacement}";`,
-                  'basic.options.json': `{ "replaceAll": "${expectedReplacement}" }`,
-                },
+              __testfixtures__: {
+                'basic.input.js': 'var foo = "foo";',
+                'basic.output.js': `var foo = "${expectedReplacement}";`,
+                'basic.options.json': `{ "replaceAll": "${expectedReplacement}" }`,
               },
             },
-          });
+          },
+        });
 
-          let result = yield execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.code, 0, 'exited with zero');
-        })
-      );
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.code, 0, 'exited with zero');
+      });
 
-      QUnit.test(
-        'transform should receive a file path in tests',
-        wrap(function*(assert) {
-          const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
-          const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/basic.input.js`;
+      QUnit.test('transform should receive a file path in tests', async function(assert) {
+        const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
+        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/basic.input.js`;
 
-          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
 
                   module.exports = function transformer(file, api) {
@@ -254,60 +226,56 @@ QUnit.module('codemod-cli', function(hooks) {
                     .toSource();
                   }
                 `,
-                __testfixtures__: {
+              __testfixtures__: {
+                'basic.input.js': 'var foo = "foo";',
+                'basic.output.js': `var foo = "${expectedPath}";`,
+              },
+            },
+          },
+        });
+
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.code, 0, 'exited with zero');
+      });
+
+      QUnit.test('transform should receive a subfolder file path in tests', async function(assert) {
+        const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
+        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.input.js`;
+
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
+                  const { getParser } = require('codemod-cli').jscodeshift;
+
+                  module.exports = function transformer(file, api) {
+                    const j = getParser(api);
+
+                    return j(file.source)
+                    .find(j.Literal)
+                    .forEach(path => {
+                      path.replace(
+                        j.stringLiteral(file.path)
+                      );
+                    })
+                    .toSource();
+                  }
+                `,
+              __testfixtures__: {
+                foo: {
                   'basic.input.js': 'var foo = "foo";',
                   'basic.output.js': `var foo = "${expectedPath}";`,
                 },
               },
             },
-          });
+          },
+        });
 
-          let result = yield execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.code, 0, 'exited with zero');
-        })
-      );
-
-      QUnit.test(
-        'transform should receive a subfolder file path in tests',
-        wrap(function*(assert) {
-          const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
-          const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.input.js`;
-
-          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
-
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
-                  const { getParser } = require('codemod-cli').jscodeshift;
-
-                  module.exports = function transformer(file, api) {
-                    const j = getParser(api);
-
-                    return j(file.source)
-                    .find(j.Literal)
-                    .forEach(path => {
-                      path.replace(
-                        j.stringLiteral(file.path)
-                      );
-                    })
-                    .toSource();
-                  }
-                `,
-                __testfixtures__: {
-                  foo: {
-                    'basic.input.js': 'var foo = "foo";',
-                    'basic.output.js': `var foo = "${expectedPath}";`,
-                  },
-                },
-              },
-            },
-          });
-
-          let result = yield execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.code, 0, 'exited with zero');
-        })
-      );
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.code, 0, 'exited with zero');
+      });
     });
   });
 
@@ -315,40 +283,35 @@ QUnit.module('codemod-cli', function(hooks) {
     setupProject(hooks);
 
     let userProject;
-    hooks.beforeEach(
-      wrap(function*() {
-        // fix mode of bin script (lost during sharedProject.copy())
-        fs.chmodSync(codemodProject.path('bin/cli.js'), 0o755);
+    hooks.beforeEach(async function() {
+      // fix mode of bin script (lost during sharedProject.copy())
+      fs.chmodSync(codemodProject.path('bin/cli.js'), 0o755);
 
-        // includes simple identifier reverser
-        yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+      // includes simple identifier reverser
+      await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-        userProject = yield createTempDir();
-        process.chdir(userProject.path());
-      })
-    );
+      userProject = await createTempDir();
+      process.chdir(userProject.path());
+    });
 
     hooks.afterEach(function() {
       return userProject.dispose();
     });
 
-    QUnit.test(
-      'works with globs',
-      wrap(function*(assert) {
-        userProject.write({
-          foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
-        });
+    QUnit.test('works with globs', async function(assert) {
+      userProject.write({
+        foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
+      });
 
-        yield execa(codemodProject.path('bin/cli.js'), ['main', 'foo/*thing.js']);
+      await execa(codemodProject.path('bin/cli.js'), ['main', 'foo/*thing.js']);
 
-        assert.deepEqual(userProject.read(), {
-          foo: {
-            'something.js': 'let halb = rab',
-            'other.js': 'let blah = bar',
-          },
-        });
-      })
-    );
+      assert.deepEqual(userProject.read(), {
+        foo: {
+          'something.js': 'let halb = rab',
+          'other.js': 'let blah = bar',
+        },
+      });
+    });
   });
 
   QUnit.module('programmatic API', function(hooks) {
@@ -357,50 +320,43 @@ QUnit.module('codemod-cli', function(hooks) {
     QUnit.module('runTransform', function(hooks) {
       let userProject;
 
-      hooks.beforeEach(
-        wrap(function*() {
-          // includes simple identifier reverser
-          yield execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+      hooks.beforeEach(async function() {
+        // includes simple identifier reverser
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          userProject = yield createTempDir();
-          process.chdir(userProject.path());
-        })
-      );
+        userProject = await createTempDir();
+        process.chdir(userProject.path());
+      });
 
       hooks.afterEach(function() {
         return userProject.dispose();
       });
 
-      QUnit.test(
-        'runs transform',
-        wrap(function*(assert) {
-          userProject.write({
-            foo: {
-              'something.js': 'let blah = bar;',
-              'other.js': 'let blah = bar;',
-              'otherthing.ts': 'let blah: Map = bar;',
-            },
-          });
+      QUnit.test('runs transform', async function(assert) {
+        userProject.write({
+          foo: {
+            'something.js': 'let blah = bar;',
+            'other.js': 'let blah = bar;',
+            'otherthing.ts': 'let blah: Map = bar;',
+          },
+        });
 
-          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
 
-          assert.deepEqual(userProject.read(), {
-            foo: {
-              'something.js': 'let halb = rab;',
-              'other.js': 'let blah = bar;',
-              'otherthing.ts': 'let halb: paM = rab;',
-            },
-          });
-        })
-      );
+        assert.deepEqual(userProject.read(), {
+          foo: {
+            'something.js': 'let halb = rab;',
+            'other.js': 'let blah = bar;',
+            'otherthing.ts': 'let halb: paM = rab;',
+          },
+        });
+      });
 
-      QUnit.test(
-        'runs transform with options',
-        wrap(function*(assert) {
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
+      QUnit.test('runs transform with options', async function(assert) {
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
                   const { getOptions } = require('codemod-cli');
                   module.exports = function transformer(file, api) {
@@ -416,126 +372,119 @@ QUnit.module('codemod-cli', function(hooks) {
                     .toSource();
                   }
               `,
-              },
             },
-          });
-          userProject.write({
-            foo: { 'something.js': `let blah = "bar";` },
-          });
+          },
+        });
+        userProject.write({
+          foo: { 'something.js': `let blah = "bar";` },
+        });
 
-          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
-            '--biz',
-            'A',
-            '--baz',
-            'B',
-            'foo/*ing.[jt]s',
-          ]);
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
+          '--biz',
+          'A',
+          '--baz',
+          'B',
+          'foo/*ing.[jt]s',
+        ]);
 
-          assert.deepEqual(userProject.read(), {
-            foo: { 'something.js': `let blah = "AB";` },
-          });
-        })
-      );
+        assert.deepEqual(userProject.read(), {
+          foo: { 'something.js': `let blah = "AB";` },
+        });
+      });
 
-      QUnit.test(
-        'runs transform against class syntax',
-        wrap(function*(assert) {
-          userProject.write({
-            foo: {
-              'something.js': `
+      QUnit.test('runs transform against class syntax', async function(assert) {
+        userProject.write({
+          foo: {
+            'something.js': `
                 class Blah {
                   blah = bar;
                 }
               `,
-              'other.js': `
+            'other.js': `
                 class Blah {
                   blah = bar;
                 }
               `,
-              'otherthing.ts': `
+            'otherthing.ts': `
                 class Blah {
                   blah: Map = bar;
                 }
               `,
-            },
-          });
+          },
+        });
 
-          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
 
-          assert.deepEqual(userProject.read(), {
-            foo: {
-              'something.js': `
+        assert.deepEqual(userProject.read(), {
+          foo: {
+            'something.js': `
                 class halB {
                   halb = rab;
                 }
               `,
-              'other.js': `
+            'other.js': `
                 class Blah {
                   blah = bar;
                 }
               `,
-              'otherthing.ts': `
+            'otherthing.ts': `
                 class halB {
                   halb: paM = rab;
                 }
               `,
-            },
-          });
-        })
-      );
+          },
+        });
+      });
 
-      QUnit.test(
-        'runs transform against decorator syntax',
-        wrap(function*(assert) {
-          userProject.write({
-            foo: {
-              'something.js': `
+      QUnit.test('runs transform against decorator syntax', async function(assert) {
+        userProject.write({
+          foo: {
+            'something.js': `
                 class Blah {
                   @bar
                   blah() {}
                 }
               `,
-              'other.js': `
+            'other.js': `
                 class Blah {
                   @bar
                   blah() {}
                 }
               `,
-              'otherthing.ts': `
+            'otherthing.ts': `
                 class Blah {
                   @bar
                   blah() {}
                 }
               `,
-            },
-          });
+          },
+        });
 
-          yield CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.[jt]s');
 
-          assert.deepEqual(userProject.read(), {
-            foo: {
-              'something.js': `
+        assert.deepEqual(userProject.read(), {
+          foo: {
+            'something.js': `
                 class halB {
                   @rab
                   halb() {}
                 }
               `,
-              'other.js': `
+            'other.js': `
                 class Blah {
                   @bar
                   blah() {}
                 }
               `,
-              'otherthing.ts': `
+            'otherthing.ts': `
                 class halB {
                   @rab
                   halb() {}
                 }
               `,
-            },
-          });
-        })
-      );
+          },
+        });
+      });
     });
   });
 });
