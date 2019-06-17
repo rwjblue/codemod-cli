@@ -62,6 +62,7 @@ QUnit.module('codemod-cli', function(hooks) {
         assert.equal(result.code, 0, 'exited with zero');
         assert.deepEqual(walkSync(codemodProject.path()), [
           'ember-qunit-codemod/',
+          'ember-qunit-codemod/.gitignore',
           'ember-qunit-codemod/.travis.yml',
           'ember-qunit-codemod/README.md',
           'ember-qunit-codemod/bin/',
