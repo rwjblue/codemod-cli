@@ -1,3 +1,11 @@
+## v1.0.0 (2019-06-17)
+
+#### :boom: Breaking Change
+* [#61](https://github.com/rwjblue/codemod-cli/pull/61) Drop support for Node 6 and 11. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
 ## v0.2.12 (2019-06-17)
 
 #### :rocket: Enhancement
