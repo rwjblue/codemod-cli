@@ -1,3 +1,11 @@
+## v0.2.12 (2019-06-17)
+
+#### :rocket: Enhancement
+* [#60](https://github.com/rwjblue/codemod-cli/pull/60) Add `.gitignore` when creating new codemod project ([@mfeckie](https://github.com/mfeckie))
+
+#### Committers: 1
+- Martin Feckie ([@mfeckie](https://github.com/mfeckie))
+
 ## v0.2.11 (2019-04-30)
 
 #### :rocket: Enhancement
