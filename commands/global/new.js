@@ -132,6 +132,6 @@ module.exports.handler = function handler(options) {
       mode: 0o755 /* -rwxr-xr-x */,
     }
   );
-  fs.outputFileSync(projectName + '/.gitignore', stripIndent('node_modules'));
+  fs.outputFileSync(projectName + '/.gitignore', '/node_modules');
   fs.ensureFileSync(projectName + '/transforms/.gitkeep');
 };
