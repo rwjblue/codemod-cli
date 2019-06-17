@@ -79,6 +79,7 @@ module.exports.handler = function handler(options) {
         jest: pkg.devDependencies.jest,
         coveralls: pkg.devDependencies.coveralls,
       },
+      engines: pkg.engines,
       jest: {
         testEnvironment: 'node',
       },
