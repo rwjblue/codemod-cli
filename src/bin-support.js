@@ -17,7 +17,7 @@ async function runTransform(binRoot, transformName, args) {
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
 
-    return execa(binPath, ['-t', transformPath, '--extensions', 'js,ts', ...foundPaths], {
+    return execa(binPath, ['-t', transformPath, '--extensions', 'js,ts,hbs', ...foundPaths], {
       stdio: 'inherit',
       env: {
         CODEMOD_CLI_ARGS: JSON.stringify(options),
