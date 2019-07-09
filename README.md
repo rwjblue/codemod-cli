@@ -57,6 +57,25 @@ can update your project's README and your transforms README via:
 codemod-cli update-docs
 ```
 
+### File Types
+
+By default the bin script that is generated for your `codemod-cli` project will run against `.js` and `.ts` files.
+If you'd like to change that (e.g. to run against `.hbs` or `.jsx` files) you can tweak your projects `bin/cli.js` script
+to add `--extensions=hbs,jsx`:
+
+```js
+#!/usr/bin/env node
+'use strict';
+
+require('codemod-cli').runTransform(
+  __dirname,
+  process.argv[2]       /* transform name */,
+  process.argv.slice(3) /* paths or globs */
+
+  '--extensions=hbs,jsx'
+)
+```
+
 Contributing
 ------------------------------------------------------------------------------
 
