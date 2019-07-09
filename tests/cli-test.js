@@ -375,6 +375,7 @@ QUnit.module('codemod-cli', function(hooks) {
             },
           },
         });
+
         userProject.write({
           foo: { 'something.js': `let blah = "bar";` },
         });
@@ -389,6 +390,34 @@ QUnit.module('codemod-cli', function(hooks) {
 
         assert.deepEqual(userProject.read(), {
           foo: { 'something.js': `let blah = "AB";` },
+        });
+      });
+
+      QUnit.test('can specify additional extensions to run against', async function(assert) {
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
+                  module.exports = function transformer(file, api) {
+                    return file.source.toUpperCase();
+                  }
+              `,
+            },
+          },
+        });
+
+        userProject.write({
+          foo: { 'something.hbs': `<Foo />` },
+        });
+
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
+          '--extensions',
+          'hbs',
+          'foo/**',
+        ]);
+
+        assert.deepEqual(userProject.read(), {
+          foo: { 'something.hbs': `<FOO />` },
         });
       });
 
