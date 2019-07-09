@@ -69,10 +69,9 @@ to add `--extensions=hbs,jsx`:
 
 require('codemod-cli').runTransform(
   __dirname,
-  process.argv[2]       /* transform name */,
-  process.argv.slice(3) /* paths or globs */
-
-  '--extensions=hbs,jsx'
+  process.argv[2],       /* transform name */,
+  process.argv.slice(3), /* paths or globs */
+  'hbs,jsx'
 )
 ```
 

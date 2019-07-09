@@ -410,11 +410,7 @@ QUnit.module('codemod-cli', function(hooks) {
           foo: { 'something.hbs': `<Foo />` },
         });
 
-        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
-          '--extensions',
-          'hbs',
-          'foo/**',
-        ]);
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', ['foo/**'], 'hbs');
 
         assert.deepEqual(userProject.read(), {
           foo: { 'something.hbs': `<FOO />` },

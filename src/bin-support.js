@@ -2,7 +2,7 @@
 
 const DEFAULT_EXTENSIONS = 'js,ts';
 
-async function runTransform(binRoot, transformName, args) {
+async function runTransform(binRoot, transformName, args, extensions = DEFAULT_EXTENSIONS) {
   const globby = require('globby');
   const execa = require('execa');
   const chalk = require('chalk');
@@ -18,8 +18,6 @@ async function runTransform(binRoot, transformName, args) {
     let jscodeshiftPkg = require('jscodeshift/package');
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
-
-    let extensions = options.extensions || DEFAULT_EXTENSIONS;
 
     let binOptions = ['-t', transformPath, '--extensions', extensions, ...foundPaths];
 
