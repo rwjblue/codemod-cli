@@ -21,7 +21,9 @@ async function runTransform(binRoot, transformName, args) {
 
     let extensions = options.extensions || DEFAULT_EXTENSIONS;
 
-    return execa(binPath, ['-t', transformPath, '--extensions', extensions, ...foundPaths], {
+    let binOptions = ['-t', transformPath, '--extensions', extensions, ...foundPaths];
+
+    return execa(binPath, binOptions, {
       stdio: 'inherit',
       env: {
         CODEMOD_CLI_ARGS: JSON.stringify(options),
