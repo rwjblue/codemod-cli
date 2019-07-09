@@ -1,3 +1,11 @@
+## v1.1.0 (2019-07-09)
+
+#### :rocket: Enhancement
+* [#62](https://github.com/rwjblue/codemod-cli/pull/62) Add support for custom file extensions ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- L. Preston Sego III ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
 ## v1.0.0 (2019-06-17)
 
 #### :boom: Breaking Change
