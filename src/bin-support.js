@@ -1,6 +1,8 @@
 'use strict';
 
-async function runTransform(binRoot, transformName, args) {
+const DEFAULT_EXTENSIONS = 'js,ts';
+
+async function runTransform(binRoot, transformName, args, extensions = DEFAULT_EXTENSIONS) {
   const globby = require('globby');
   const execa = require('execa');
   const chalk = require('chalk');
@@ -17,7 +19,9 @@ async function runTransform(binRoot, transformName, args) {
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
 
-    return execa(binPath, ['-t', transformPath, '--extensions', 'js,ts', ...foundPaths], {
+    let binOptions = ['-t', transformPath, '--extensions', extensions, ...foundPaths];
+
+    return execa(binPath, binOptions, {
       stdio: 'inherit',
       env: {
         CODEMOD_CLI_ARGS: JSON.stringify(options),
