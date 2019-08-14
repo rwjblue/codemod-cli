@@ -203,7 +203,7 @@ QUnit.module('codemod-cli', function(hooks) {
 
       QUnit.test('transform should receive a file path in tests', async function(assert) {
         const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
-        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/basic.input.js`;
+        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/basic.js`;
 
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
@@ -240,7 +240,7 @@ QUnit.module('codemod-cli', function(hooks) {
 
       QUnit.test('transform should receive a subfolder file path in tests', async function(assert) {
         const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
-        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.input.js`;
+        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.js`;
 
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
