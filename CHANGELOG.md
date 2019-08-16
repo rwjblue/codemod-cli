@@ -1,3 +1,15 @@
+## v2.0.0 (2019-08-16)
+
+#### :boom: Breaking Change
+* [#64](https://github.com/rwjblue/codemod-cli/pull/64) Removes `input` suffix from the path indicated during a test ([@pzuraq](https://github.com/pzuraq))
+
+#### :rocket: Enhancement
+* [#63](https://github.com/rwjblue/codemod-cli/pull/63) Use indicated transform extensions to filter files to be processed ([@dcyriller](https://github.com/dcyriller))
+
+#### Committers: 2
+- Chris Garrett ([@pzuraq](https://github.com/pzuraq))
+- Cyrille David ([@dcyriller](https://github.com/dcyriller))
+
 ## v1.1.0 (2019-07-09)
 
 #### :rocket: Enhancement
