@@ -34,6 +34,7 @@ function jscodeshiftTest(options) {
       .forEach(filename => {
         let extension = path.extname(filename);
         let testName = filename.replace(`.input${extension}`, '');
+        let testInputPath = path.join(details.fixtureDir, `${testName}${extension}`);
         let inputPath = path.join(details.fixtureDir, `${testName}.input${extension}`);
         let outputPath = path.join(details.fixtureDir, `${testName}.output${extension}`);
         let optionsPath = path.join(details.fixtureDir, `${testName}.options.json`);
@@ -52,7 +53,7 @@ function jscodeshiftTest(options) {
             runInlineTest(
               transform,
               {},
-              { path: inputPath, source: fs.readFileSync(inputPath, 'utf8') },
+              { path: testInputPath, source: fs.readFileSync(inputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
@@ -61,7 +62,7 @@ function jscodeshiftTest(options) {
             runInlineTest(
               transform,
               {},
-              { path: inputPath, source: fs.readFileSync(outputPath, 'utf8') },
+              { path: testInputPath, source: fs.readFileSync(outputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
