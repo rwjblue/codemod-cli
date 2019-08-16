@@ -12,7 +12,9 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
   let { paths, options } = parseTransformArgs(args);
 
   try {
-    let foundPaths = await globby(paths);
+    let foundPaths = await globby(paths, {
+      expandDirectories: { extensions: extensions.split(',') },
+    });
     let transformPath = path.join(binRoot, '..', 'transforms', transformName, 'index.js');
 
     let jscodeshiftPkg = require('jscodeshift/package');
