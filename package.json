@@ -29,6 +29,7 @@
     "test": "tests"
   },
   "scripts": {
+    "lint": "eslint .",
     "lint:js": "eslint .",
     "release": "release-it",
     "test": "qunit tests/**/*-test.js"
