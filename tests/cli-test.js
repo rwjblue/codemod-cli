@@ -50,7 +50,7 @@ QUnit.module('codemod-cli', function(hooks) {
     QUnit.test('should generate a basic project structure', async function(assert) {
       let result = await execa(EXECUTABLE_PATH, ['new', 'ember-qunit-codemod']);
 
-      assert.equal(result.code, 0, 'exited with zero');
+      assert.equal(result.exitCode, 0, 'exited with zero');
       assert.deepEqual(walkSync(codemodProject.path()), [
         'ember-qunit-codemod/',
         'ember-qunit-codemod/.eslintignore',
@@ -77,7 +77,7 @@ QUnit.module('codemod-cli', function(hooks) {
 
     QUnit.test('should pass for a basic project', async function(assert) {
       let result = await execa('yarn', ['lint']);
-      assert.equal(result.code, 0, 'exited with zero');
+      assert.equal(result.exitCode, 0, 'exited with zero');
     });
   });
 
@@ -107,7 +107,7 @@ QUnit.module('codemod-cli', function(hooks) {
       QUnit.test('should generate a codemod', async function(assert) {
         let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-        assert.equal(result.code, 0, 'exited with zero');
+        assert.equal(result.exitCode, 0, 'exited with zero');
         assert.deepEqual(walkSync(codemodProject.path('transforms')), [
           '.gitkeep',
           'main/',
@@ -131,7 +131,7 @@ QUnit.module('codemod-cli', function(hooks) {
           'this-dot-owner',
         ]);
 
-        assert.equal(result.code, 0, 'exited with zero');
+        assert.equal(result.exitCode, 0, 'exited with zero');
         assert.deepEqual(walkSync(codemodProject.path('transforms')), [
           '.gitkeep',
           'main/',
@@ -153,7 +153,7 @@ QUnit.module('codemod-cli', function(hooks) {
         await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
 
         let result = await execa(EXECUTABLE_PATH, ['test']);
-        assert.equal(result.code, 0, 'exited with zero');
+        assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
       QUnit.test('should fail when input and output do not match', async function(assert) {
@@ -174,7 +174,7 @@ QUnit.module('codemod-cli', function(hooks) {
         try {
           await execa(EXECUTABLE_PATH, ['test']);
         } catch (result) {
-          assert.notEqual(result.code, 0, 'exited with non-zero');
+          assert.notEqual(result.exitCode, 0, 'exited with non-zero');
         }
       });
 
@@ -214,7 +214,7 @@ QUnit.module('codemod-cli', function(hooks) {
         });
 
         let result = await execa(EXECUTABLE_PATH, ['test']);
-        assert.equal(result.code, 0, 'exited with zero');
+        assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
       QUnit.test('transform should receive a file path in tests', async function(assert) {
@@ -251,7 +251,7 @@ QUnit.module('codemod-cli', function(hooks) {
         });
 
         let result = await execa(EXECUTABLE_PATH, ['test']);
-        assert.equal(result.code, 0, 'exited with zero');
+        assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
       QUnit.test('transform should receive a subfolder file path in tests', async function(assert) {
@@ -290,7 +290,7 @@ QUnit.module('codemod-cli', function(hooks) {
         });
 
         let result = await execa(EXECUTABLE_PATH, ['test']);
-        assert.equal(result.code, 0, 'exited with zero');
+        assert.equal(result.exitCode, 0, 'exited with zero');
       });
     });
   });
