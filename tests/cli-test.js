@@ -41,9 +41,9 @@ QUnit.module('codemod-cli', function(hooks) {
   });
 
   hooks.afterEach(async function() {
-    await codemodProject.dispose();
-
     process.chdir(ROOT);
+
+    await codemodProject.dispose();
   });
 
   QUnit.module('new', function() {
@@ -311,6 +311,8 @@ QUnit.module('codemod-cli', function(hooks) {
     });
 
     hooks.afterEach(function() {
+      process.chdir(ROOT);
+
       return userProject.dispose();
     });
 
@@ -345,6 +347,8 @@ QUnit.module('codemod-cli', function(hooks) {
       });
 
       hooks.afterEach(function() {
+        process.chdir(ROOT);
+
         return userProject.dispose();
       });
 
