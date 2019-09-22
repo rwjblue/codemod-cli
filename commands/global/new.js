@@ -9,11 +9,12 @@ module.exports.builder = function builder(yargs) {
   });
 };
 
-module.exports.handler = function handler(options) {
+module.exports.handler = async function handler(options) {
   let { projectName } = options;
 
   const fs = require('fs-extra');
   const { stripIndent } = require('common-tags');
+  const latestVersion = require('latest-version');
   const pkg = require('../../package.json');
 
   fs.outputFileSync(
@@ -65,6 +66,7 @@ module.exports.handler = function handler(options) {
       name: projectName,
       version: '0.1.0',
       scripts: {
+        lint: 'eslint --cache .',
         test: 'codemod-cli test',
         'test:coverage': 'codemod-cli test --coverage',
         'update-docs': 'codemod-cli update-docs',
@@ -76,8 +78,13 @@ module.exports.handler = function handler(options) {
         'codemod-cli': `^${pkg.version}`,
       },
       devDependencies: {
-        jest: pkg.devDependencies.jest,
         coveralls: pkg.devDependencies.coveralls,
+        eslint: `^${await latestVersion('eslint')}`,
+        'eslint-config-prettier': `^${await latestVersion('eslint-config-prettier')}`,
+        'eslint-plugin-node': `^${await latestVersion('eslint-plugin-node')}`,
+        'eslint-plugin-prettier': `^${await latestVersion('eslint-plugin-prettier')}`,
+        jest: pkg.devDependencies.jest,
+        prettier: `^${await latestVersion('prettier')}`,
       },
       engines: pkg.engines,
       jest: {
@@ -88,6 +95,50 @@ module.exports.handler = function handler(options) {
       spaces: 2,
     }
   );
+
+  // linting setup
+  fs.outputFileSync(
+    projectName + '/.eslintrc.js',
+    stripIndent`
+      module.exports = {
+        parserOptions: {
+          ecmaVersion: 2018,
+        },
+
+        plugins: ['prettier', 'node'],
+        extends: ['eslint:recommended', 'plugin:prettier/recommended', 'plugin:node/recommended'],
+        env: {
+          node: true,
+        },
+        rules: {},
+        overrides: [
+          {
+            files: ['__tests__/**/*.js'],
+            env: {
+              jest: true,
+            },
+          },
+        ],
+      };` + '\n'
+  );
+  fs.outputFileSync(
+    projectName + '/.eslintignore',
+    stripIndent`
+      !.*
+      __testfixtures__
+    `
+  );
+  fs.outputFileSync(
+    projectName + '/.prettierrc',
+    stripIndent`
+      {
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "printWidth": 100
+      }
+    `
+  );
+
   fs.outputFileSync(
     projectName + '/.travis.yml',
     stripIndent`
@@ -110,6 +161,7 @@ module.exports.handler = function handler(options) {
         - yarn install
 
       script:
+        - yarn lint
         - yarn test:coverage
 
       after_success:
@@ -124,15 +176,14 @@ module.exports.handler = function handler(options) {
 
       require('codemod-cli').runTransform(
         __dirname,
-        process.argv[2]       /* transform name */,
+        process.argv[2] /* transform name */,
         process.argv.slice(3) /* paths or globs */
-      )
-    `,
+      );` + '\n',
     {
       encoding: 'utf8',
       mode: 0o755 /* -rwxr-xr-x */,
     }
   );
-  fs.outputFileSync(projectName + '/.gitignore', '/node_modules');
+  fs.outputFileSync(projectName + '/.gitignore', '/node_modules\n/.eslintcache');
   fs.ensureFileSync(projectName + '/transforms/.gitkeep');
 };
