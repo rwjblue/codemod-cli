@@ -53,7 +53,10 @@ QUnit.module('codemod-cli', function(hooks) {
       assert.equal(result.code, 0, 'exited with zero');
       assert.deepEqual(walkSync(codemodProject.path()), [
         'ember-qunit-codemod/',
+        'ember-qunit-codemod/.eslintignore',
+        'ember-qunit-codemod/.eslintrc.js',
         'ember-qunit-codemod/.gitignore',
+        'ember-qunit-codemod/.prettierrc',
         'ember-qunit-codemod/.travis.yml',
         'ember-qunit-codemod/README.md',
         'ember-qunit-codemod/bin/',
@@ -62,6 +65,19 @@ QUnit.module('codemod-cli', function(hooks) {
         'ember-qunit-codemod/transforms/',
         'ember-qunit-codemod/transforms/.gitkeep',
       ]);
+    });
+  });
+
+  QUnit.module('linting', function(hooks) {
+    setupProject(hooks);
+
+    hooks.beforeEach(async function() {
+      await execa('yarn');
+    });
+
+    QUnit.test('should pass for a basic project', async function(assert) {
+      let result = await execa('yarn', ['lint']);
+      assert.equal(result.code, 0, 'exited with zero');
     });
   });
 
