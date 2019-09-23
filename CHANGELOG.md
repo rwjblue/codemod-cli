@@ -1,3 +1,17 @@
+## v2.1.0 (2019-09-23)
+
+#### :rocket: Enhancement
+* [#71](https://github.com/rwjblue/codemod-cli/pull/71) Add GH Actions Workflow setup to new projects. ([@rwjblue](https://github.com/rwjblue))
+* [#67](https://github.com/rwjblue/codemod-cli/pull/67) Add linting setup to new projects. ([@rwjblue](https://github.com/rwjblue))
+
+#### :house: Internal
+* [#70](https://github.com/rwjblue/codemod-cli/pull/70) Remove TravisCI setup. ([@rwjblue](https://github.com/rwjblue))
+* [#69](https://github.com/rwjblue/codemod-cli/pull/69) Add GH Actions CI. ([@rwjblue](https://github.com/rwjblue))
+* [#68](https://github.com/rwjblue/codemod-cli/pull/68) Update dependencies to latest versions. ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 1
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
 ## v2.0.0 (2019-08-16)
 
 #### :boom: Breaking Change
