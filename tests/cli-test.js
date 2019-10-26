@@ -389,7 +389,7 @@ QUnit.module('codemod-cli', function(hooks) {
                     .find(j.Literal)
                     .forEach(path => {
                       path.replace(
-                        j.stringLiteral(options.biz + options.baz)
+                        j.stringLiteral(options.biz + options.baz + (options.someBoolean ? 'C' : 'D'))
                       );
                     })
                     .toSource();
@@ -408,11 +408,12 @@ QUnit.module('codemod-cli', function(hooks) {
           'A',
           '--baz',
           'B',
+          '--someBoolean=false',
           'foo/*ing.[jt]s',
         ]);
 
         assert.deepEqual(userProject.read(), {
-          foo: { 'something.js': `let blah = "AB";` },
+          foo: { 'something.js': `let blah = "ABD";` },
         });
       });
 
