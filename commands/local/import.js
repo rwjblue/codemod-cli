@@ -29,8 +29,7 @@ module.exports.handler = function handler(options) {
       gist_id,
     })
     .then(({ data }) => {
-      // handle data
-      console.log(data.files['transform.js'].content);
+      // TODO: handle error if transform.js is not present
       fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
     });
 
