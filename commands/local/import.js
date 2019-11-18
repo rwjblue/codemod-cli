@@ -24,7 +24,7 @@ module.exports.handler = function handler(options) {
   let [, gist_id] = matches;
 
   const Octokit = require('@octokit/rest');
-  const octokit = new Octokit();
+  const octokit = new Octokit({ auth: 'acabfddbefb244cb3e674fa84046a907c78f2294' });
   let projectName = importCwd('./package.json').name;
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
 
@@ -34,6 +34,7 @@ module.exports.handler = function handler(options) {
     })
     .then(({ data }) => {
       // TODO: handle error if transform.js is not present
+      console.log(data.files);
       fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
     })
     .catch(err => {
