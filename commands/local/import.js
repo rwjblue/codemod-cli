@@ -17,7 +17,11 @@ module.exports.handler = function handler(options) {
   const generateFixture = require('./generate/fixture').handler;
 
   let { codemodName, gistUrl } = options;
-  let gist_id = gistUrl.slice(gistUrl.lastIndexOf('/') + 1);
+  // https://astexplorer.net/#/gist/cb7d2e7ce49741966e5e96a4b2eadc4d/d6b902bf639adc2bc6d31b35ba38aa45910b2413
+  let regex = /https:\/\/astexplorer\.net\/#\/gist\/(\w+)\/(\w+)/;
+  let matches = regex.exec(gistUrl);
+
+  let [, gist_id] = matches;
 
   const Octokit = require('@octokit/rest');
   const octokit = new Octokit();
