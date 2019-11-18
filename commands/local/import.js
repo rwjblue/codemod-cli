@@ -31,6 +31,9 @@ module.exports.handler = function handler(options) {
     .then(({ data }) => {
       // TODO: handle error if transform.js is not present
       fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
+    })
+    .catch(err => {
+      console.log('Error: ', err);
     });
 
   fs.outputFileSync(
