@@ -39,6 +39,7 @@
     "@octokit/rest": "^16.35.0",
     "chalk": "^2.4.2",
     "common-tags": "^1.8.0",
+    "dotenv": "^8.2.0",
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
     "globby": "^10.0.1",

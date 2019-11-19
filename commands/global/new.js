@@ -4,13 +4,26 @@ module.exports.command = 'new <project-name>';
 module.exports.desc = 'Generate a new codemod project';
 
 module.exports.builder = function builder(yargs) {
-  yargs.positional('project-name', {
-    describe: 'The name of the project to generate',
-  });
+  yargs
+    .positional('project-name', {
+      describe: 'The name of the project to generate',
+    })
+    .option('url', {
+      alias: 'u',
+      demandOption: false,
+      describe: 'ast-explorer gist url to import from',
+      type: 'string',
+    })
+    .option('codemod', {
+      alias: 'c',
+      demandOption: false,
+      describe: 'name of the codemod to generate',
+      type: 'string',
+    });
 };
 
 module.exports.handler = async function handler(options) {
-  let { projectName } = options;
+  let { projectName, url, codemod: codemodName } = options;
 
   const fs = require('fs-extra');
   const { stripIndent } = require('common-tags');
@@ -256,4 +269,75 @@ module.exports.handler = async function handler(options) {
   );
   fs.outputFileSync(projectName + '/.gitignore', '/node_modules\n/.eslintcache');
   fs.ensureFileSync(projectName + '/transforms/.gitkeep');
+
+  // If import options [ url && codemod] are present
+  if (url && codemodName) {
+    let regex = /https:\/\/astexplorer\.net\/#\/gist\/(\w+)\/(\w+)/;
+    let matches = regex.exec(url);
+
+    let [, gist_id] = matches;
+
+    require('dotenv').config();
+    const Octokit = require('@octokit/rest');
+    const octokit = new Octokit({ auth: process.env.CODEMOD_CLI_API_KEY });
+    let codemodDir = `${process.cwd()}/${projectName}/transforms/${codemodName}`;
+
+    octokit.gists
+      .get({
+        gist_id,
+      })
+      .then(({ data }) => {
+        fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      });
+
+    fs.outputFileSync(
+      `${codemodDir}/test.js`,
+      stripIndent`
+      'use strict';
+
+      const { runTransformTest } = require('codemod-cli');
+
+      runTransformTest({
+        type: 'jscodeshift',
+        name: '${codemodName}',
+      });
+    `,
+      'utf8'
+    );
+    fs.outputFileSync(
+      `${codemodDir}/README.md`,
+      stripIndent`
+      # ${codemodName}\n
+
+      ## Usage
+
+      \`\`\`
+      npx ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
+
+      # or
+
+      yarn global add ${projectName}
+      ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
+      \`\`\`
+
+      ## Input / Output
+
+      <!--FIXTURES_TOC_START-->
+      <!--FIXTURES_TOC_END-->
+
+      <!--FIXTURES_CONTENT_START-->
+      <!--FIXTURES_CONTENT_END-->
+    `,
+      'utf8'
+    );
+
+    // Generate basic test fixtures
+    let fixturePath = `${codemodDir}/__testfixtures__/basic`;
+
+    fs.outputFileSync(`${fixturePath}.input.js`, '');
+    fs.outputFileSync(`${fixturePath}.output.js`, '');
+  }
 };

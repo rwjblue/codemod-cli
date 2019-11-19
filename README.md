@@ -25,6 +25,12 @@ codemod-cli new <project-name>
 This will create a small project structure (`README.md`, `package.json`, etc) which is
 ready to help you manage your codemods.
 
+You can also import from ast-explorer to create a codemod project via:
+
+```
+codemod-cli new <project-name> --url <ast-explorer-url> --codemod <codemod-name>
+```
+
 Once you have a project, you can generate a new codemod:
 
 ```

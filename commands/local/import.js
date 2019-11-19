@@ -23,8 +23,9 @@ module.exports.handler = function handler(options) {
 
   let [, gist_id] = matches;
 
+  require('dotenv').config();
   const Octokit = require('@octokit/rest');
-  const octokit = new Octokit({ auth: 'acabfddbefb244cb3e674fa84046a907c78f2294' });
+  const octokit = new Octokit({ auth: process.env.CODEMOD_CLI_API_KEY });
   let projectName = importCwd('./package.json').name;
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
 
