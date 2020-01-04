@@ -15,6 +15,7 @@ module.exports.handler = function handler(options) {
   const { stripIndent } = require('common-tags');
   const importCwd = require('import-cwd');
   const generateFixture = require('./generate/fixture').handler;
+  const { codemodReadme } = require('../../src/readme-support');
 
   let { codemodName, gistUrl } = options;
   // https://astexplorer.net/#/gist/cb7d2e7ce49741966e5e96a4b2eadc4d/d6b902bf639adc2bc6d31b35ba38aa45910b2413
@@ -56,32 +57,7 @@ module.exports.handler = function handler(options) {
     `,
     'utf8'
   );
-  fs.outputFileSync(
-    `${codemodDir}/README.md`,
-    stripIndent`
-      # ${codemodName}\n
 
-      ## Usage
-
-      \`\`\`
-      npx ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
-
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
-      \`\`\`
-
-      ## Input / Output
-
-      <!--FIXTURES_TOC_START-->
-      <!--FIXTURES_TOC_END-->
-
-      <!--FIXTURES_CONTENT_START-->
-      <!--FIXTURES_CONTENT_END-->
-    `,
-    'utf8'
-  );
-
+  fs.outputFileSync(`${codemodDir}/README.md`, codemodReadme(projectName, codemodName), 'utf-8');
   generateFixture({ codemodName, fixtureName: 'basic' });
 };

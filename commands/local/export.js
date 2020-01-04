@@ -13,7 +13,7 @@ module.exports.handler = function handler(options) {
   let { codemodName } = options;
 
   const Octokit = require('@octokit/rest');
-  const octokit = new Octokit({ auth: 'acabfddbefb244cb3e674fa84046a907c78f2294' });
+  const octokit = new Octokit({ auth: process.env.CODEMOD_CLI_API_KEY });
 
   let files = {
     'astexplorer.json': {
@@ -44,7 +44,6 @@ module.exports.handler = function handler(options) {
     })
     .then(({ data }) => {
       // https://api.github.com/gists/de5cff0a12c2aaf129f94b775306af6f
-      console.log(data);
 
       // Getting the revision url and replace it with astexplorer format
       //let url = data.history[0].url.replace('api.github.com/gists', 'astexplorer.net/#/gist');

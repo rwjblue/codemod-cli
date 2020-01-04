@@ -29,50 +29,9 @@ module.exports.handler = async function handler(options) {
   const { stripIndent } = require('common-tags');
   const latestVersion = require('latest-version');
   const pkg = require('../../package.json');
+  const { codemodReadme, projectReadme } = require('../../src/readme-support');
 
-  fs.outputFileSync(
-    projectName + '/README.md',
-    stripIndent`
-      # ${projectName}\n
-
-      A collection of codemod's for ${projectName}.
-
-      ## Usage
-
-      To run a specific codemod from this project, you would run the following:
-
-      \`\`\`
-      npx ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
-
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
-      \`\`\`
-
-      ## Transforms
-
-      <!--TRANSFORMS_START-->
-      <!--TRANSFORMS_END-->
-
-      ## Contributing
-
-      ### Installation
-
-      * clone the repo
-      * change into the repo directory
-      * \`yarn\`
-
-      ### Running tests
-
-      * \`yarn test\`
-
-      ### Update Documentation
-
-      * \`yarn update-docs\`
-    `,
-    'utf8'
-  );
+  fs.outputFileSync(projectName + '/README.md', projectReadme(projectName), 'utf8');
   fs.outputJsonSync(
     projectName + '/package.json',
     {
@@ -307,32 +266,8 @@ module.exports.handler = async function handler(options) {
     `,
       'utf8'
     );
-    fs.outputFileSync(
-      `${codemodDir}/README.md`,
-      stripIndent`
-      # ${codemodName}\n
 
-      ## Usage
-
-      \`\`\`
-      npx ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
-
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
-      \`\`\`
-
-      ## Input / Output
-
-      <!--FIXTURES_TOC_START-->
-      <!--FIXTURES_TOC_END-->
-
-      <!--FIXTURES_CONTENT_START-->
-      <!--FIXTURES_CONTENT_END-->
-    `,
-      'utf8'
-    );
+    fs.outputFileSync(`${codemodDir}/README.md`, codemodReadme(projectName, codemodName), 'utf-8');
 
     // Generate basic test fixtures
     let fixturePath = `${codemodDir}/__testfixtures__/basic`;

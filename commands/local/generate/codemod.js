@@ -12,6 +12,7 @@ module.exports.handler = function handler(options) {
   const { stripIndent } = require('common-tags');
   const importCwd = require('import-cwd');
   const generateFixture = require('./fixture').handler;
+  const { codemodReadme } = require('../../../src/readme-support');
 
   let { codemodName } = options;
   let projectName = importCwd('./package.json').name;
@@ -54,32 +55,8 @@ module.exports.handler = function handler(options) {
     `,
     'utf8'
   );
-  fs.outputFileSync(
-    `${codemodDir}/README.md`,
-    stripIndent`
-      # ${codemodName}\n
 
-      ## Usage
-
-      \`\`\`
-      npx ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
-
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
-      \`\`\`
-
-      ## Input / Output
-
-      <!--FIXTURES_TOC_START-->
-      <!--FIXTURES_TOC_END-->
-
-      <!--FIXTURES_CONTENT_START-->
-      <!--FIXTURES_CONTENT_END-->
-    `,
-    'utf8'
-  );
+  fs.outputFileSync(`${codemodDir}/README.md`, codemodReadme(projectName, codemodName), 'utf-8');
 
   generateFixture({ codemodName, fixtureName: 'basic' });
 };
