@@ -37,6 +37,12 @@ Once you have a project, you can generate a new codemod:
 codemod-cli generate codemod <name of codemod>
 ```
 
+You can also import a codemod from ast-explorer url after you create a new project:
+
+```
+codemod-cli import <ast-explorer-url> <codemod-name>
+```
+
 This will setup a new jscodeshift codemod within your project at `transforms/<name of codemod>/index.js`
 along with a test harness, README, fixture directory, and an initial set of input/output fixtures.
 
