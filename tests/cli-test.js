@@ -106,6 +106,7 @@ QUnit.module('codemod-cli', function(hooks) {
         'ember-qunit-codemod/transforms/reverse-string/__testfixtures__/',
         'ember-qunit-codemod/transforms/reverse-string/__testfixtures__/basic.input.js',
         'ember-qunit-codemod/transforms/reverse-string/__testfixtures__/basic.output.js',
+        'ember-qunit-codemod/transforms/reverse-string/index.js',
         'ember-qunit-codemod/transforms/reverse-string/test.js',
       ]);
     });
