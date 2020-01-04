@@ -576,4 +576,29 @@ QUnit.module('codemod-cli', function(hooks) {
       });
     });
   });
+
+  // Local import command test
+  QUnit.module('import', function(hooks) {
+    setupProject(hooks);
+
+    QUnit.test('should import one transform from astexplorer', async function(assert) {
+      let result = await execa(EXECUTABLE_PATH, [
+        'import',
+        'https://astexplorer.net/#/gist/8cc5a4f80787283b994af842d8df5c38/58ceb9e4631064eac99f0cd7f8b35dbabe6b59a8',
+        'reverse-string',
+      ]);
+
+      assert.equal(result.exitCode, 0, 'exited with zero');
+      assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+        '.gitkeep',
+        'reverse-string/',
+        'reverse-string/README.md',
+        'reverse-string/__testfixtures__/',
+        'reverse-string/__testfixtures__/basic.input.js',
+        'reverse-string/__testfixtures__/basic.output.js',
+        'reverse-string/index.js',
+        'reverse-string/test.js',
+      ]);
+    });
+  });
 });
