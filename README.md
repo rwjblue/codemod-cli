@@ -31,6 +31,13 @@ You can also import from ast-explorer to create a codemod project via:
 codemod-cli new <project-name> --url <ast-explorer-url> --codemod <codemod-name>
 ```
 
+For example:
+
+```
+codemod-cli new my-awesome-codemod --url https://astexplorer.net/#/gist/cb7d2e7ce49741966e5e96a4b2eadc4d/d6b902bf639adc2bc6d31b35ba38aa45910b2413 --codemod reverse-string
+```
+
+
 Once you have a project, you can generate a new codemod:
 
 ```

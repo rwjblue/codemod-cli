@@ -246,7 +246,11 @@ module.exports.handler = async function handler(options) {
         gist_id,
       })
       .then(({ data }) => {
-        fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
+        if (data.files['transform.js']) {
+          fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
+        } else {
+          throw new Error('Unrecognized ast-explorer gist format');
+        }
       })
       .catch(err => {
         console.log('Error: ', err);

@@ -18,7 +18,6 @@ module.exports.handler = function handler(options) {
   const { codemodReadme } = require('../../src/readme-support');
 
   let { codemodName, gistUrl } = options;
-  // https://astexplorer.net/#/gist/cb7d2e7ce49741966e5e96a4b2eadc4d/d6b902bf639adc2bc6d31b35ba38aa45910b2413
   let regex = /https:\/\/astexplorer\.net\/#\/gist\/(\w+)\/(\w+)/;
   let matches = regex.exec(gistUrl);
 
@@ -35,9 +34,11 @@ module.exports.handler = function handler(options) {
       gist_id,
     })
     .then(({ data }) => {
-      // TODO: handle error if transform.js is not present
-      console.log(data.files);
-      fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
+      if (data.files['transform.js']) {
+        fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
+      } else {
+        throw new Error('Unrecognized ast-explorer gist format');
+      }
     })
     .catch(err => {
       console.log('Error: ', err);
