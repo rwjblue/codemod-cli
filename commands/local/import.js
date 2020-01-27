@@ -21,28 +21,19 @@ module.exports.handler = function handler(options) {
   let regex = /https:\/\/astexplorer\.net\/#\/gist\/(\w+)\/(\w+)/;
   let matches = regex.exec(gistUrl);
 
-  let [, gist_id] = matches;
+  let [, gist_id, gistRevision] = matches;
 
-  require('dotenv').config();
-  const Octokit = require('@octokit/rest');
-  const octokit = new Octokit({ auth: process.env.CODEMOD_CLI_API_KEY });
+  let rawFile = `https://gist.githubusercontent.com/astexplorer/${gist_id}/raw/${gistRevision}/transform.js`;
+
+  const request = require('request'); // eslint-disable-line
+  request.get(rawFile, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      fs.outputFileSync(`${codemodDir}/index.js`, body, 'utf8');
+    }
+  });
+
   let projectName = importCwd('./package.json').name;
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
-
-  octokit.gists
-    .get({
-      gist_id,
-    })
-    .then(({ data }) => {
-      if (data.files['transform.js']) {
-        fs.outputFileSync(`${codemodDir}/index.js`, data.files['transform.js'].content, 'utf8');
-      } else {
-        throw new Error('Unrecognized ast-explorer gist format');
-      }
-    })
-    .catch(err => {
-      console.log('Error: ', err);
-    });
 
   fs.outputFileSync(
     `${codemodDir}/test.js`,
