@@ -4,62 +4,34 @@ module.exports.command = 'new <project-name>';
 module.exports.desc = 'Generate a new codemod project';
 
 module.exports.builder = function builder(yargs) {
-  yargs.positional('project-name', {
-    describe: 'The name of the project to generate',
-  });
+  yargs
+    .positional('project-name', {
+      describe: 'The name of the project to generate',
+    })
+    .option('url', {
+      alias: 'u',
+      demandOption: false,
+      describe: 'ast-explorer gist url to import from',
+      type: 'string',
+    })
+    .option('codemod', {
+      alias: 'c',
+      demandOption: false,
+      describe: 'name of the codemod to generate',
+      type: 'string',
+    });
 };
 
 module.exports.handler = async function handler(options) {
-  let { projectName } = options;
+  let { projectName, url, codemod: codemodName } = options;
 
   const fs = require('fs-extra');
   const { stripIndent } = require('common-tags');
   const latestVersion = require('latest-version');
   const pkg = require('../../package.json');
+  const { codemodReadme, projectReadme } = require('../../src/readme-support');
 
-  fs.outputFileSync(
-    projectName + '/README.md',
-    stripIndent`
-      # ${projectName}\n
-
-      A collection of codemod's for ${projectName}.
-
-      ## Usage
-
-      To run a specific codemod from this project, you would run the following:
-
-      \`\`\`
-      npx ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
-
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
-      \`\`\`
-
-      ## Transforms
-
-      <!--TRANSFORMS_START-->
-      <!--TRANSFORMS_END-->
-
-      ## Contributing
-
-      ### Installation
-
-      * clone the repo
-      * change into the repo directory
-      * \`yarn\`
-
-      ### Running tests
-
-      * \`yarn test\`
-
-      ### Update Documentation
-
-      * \`yarn update-docs\`
-    `,
-    'utf8'
-  );
+  fs.outputFileSync(projectName + '/README.md', projectReadme(projectName), 'utf8');
   fs.outputJsonSync(
     projectName + '/package.json',
     {
@@ -256,4 +228,52 @@ module.exports.handler = async function handler(options) {
   );
   fs.outputFileSync(projectName + '/.gitignore', '/node_modules\n/.eslintcache');
   fs.ensureFileSync(projectName + '/transforms/.gitkeep');
+
+  // If import options [ url && codemod] are present
+  if (url && codemodName) {
+    let regex = /https:\/\/astexplorer\.net\/#\/gist\/(\w+)\/(\w+)/;
+    let matches = regex.exec(url);
+
+    let [, gist_id, gistRevision] = matches;
+
+    let rawFile = `https://gist.githubusercontent.com/astexplorer/${gist_id}/raw/${gistRevision}/transform.js`;
+
+    const request = require('request'); // eslint-disable-line
+
+    request.get(rawFile, function(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        // HACK: Replacing export default with module.exports
+        let _body = body.replace('export default', 'module.exports =');
+
+        // Formatting with prettier to avoid possible lint errors in new project
+        const prettier = require('prettier'); // eslint-disable-line
+        _body = prettier.format(_body, { parser: 'babel', singleQuote: true });
+        fs.outputFileSync(`${codemodDir}/index.js`, _body, 'utf8');
+      }
+    });
+
+    let codemodDir = `${process.cwd()}/${projectName}/transforms/${codemodName}`;
+
+    fs.outputFileSync(
+      `${codemodDir}/test.js`,
+      stripIndent`
+      'use strict';
+
+      const { runTransformTest } = require('codemod-cli');
+
+      runTransformTest({
+        type: 'jscodeshift',
+        name: '${codemodName}',
+      });` + '\n',
+      'utf8'
+    );
+
+    fs.outputFileSync(`${codemodDir}/README.md`, codemodReadme(projectName, codemodName), 'utf-8');
+
+    // Generate basic test fixtures
+    let fixturePath = `${codemodDir}/__testfixtures__/basic`;
+
+    fs.outputFileSync(`${fixturePath}.input.js`, '');
+    fs.outputFileSync(`${fixturePath}.output.js`, '');
+  }
 };

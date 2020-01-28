@@ -71,6 +71,47 @@ QUnit.module('codemod-cli', function(hooks) {
     });
   });
 
+  QUnit.module('new with import url', function() {
+    QUnit.test('should generate a basic project structure and one transform', async function(
+      assert
+    ) {
+      let result = await execa(EXECUTABLE_PATH, [
+        'new',
+        'ember-qunit-codemod',
+        '--url',
+        'https://astexplorer.net/#/gist/8cc5a4f80787283b994af842d8df5c38/58ceb9e4631064eac99f0cd7f8b35dbabe6b59a8',
+        '--codemod',
+        'reverse-string',
+      ]);
+
+      assert.equal(result.exitCode, 0, 'exited with zero');
+      assert.deepEqual(walkSync(codemodProject.path()), [
+        'ember-qunit-codemod/',
+        'ember-qunit-codemod/.eslintignore',
+        'ember-qunit-codemod/.eslintrc.js',
+        'ember-qunit-codemod/.github/',
+        'ember-qunit-codemod/.github/workflows/',
+        'ember-qunit-codemod/.github/workflows/ci.yml',
+        'ember-qunit-codemod/.gitignore',
+        'ember-qunit-codemod/.prettierrc',
+        'ember-qunit-codemod/.travis.yml',
+        'ember-qunit-codemod/README.md',
+        'ember-qunit-codemod/bin/',
+        'ember-qunit-codemod/bin/cli.js',
+        'ember-qunit-codemod/package.json',
+        'ember-qunit-codemod/transforms/',
+        'ember-qunit-codemod/transforms/.gitkeep',
+        'ember-qunit-codemod/transforms/reverse-string/',
+        'ember-qunit-codemod/transforms/reverse-string/README.md',
+        'ember-qunit-codemod/transforms/reverse-string/__testfixtures__/',
+        'ember-qunit-codemod/transforms/reverse-string/__testfixtures__/basic.input.js',
+        'ember-qunit-codemod/transforms/reverse-string/__testfixtures__/basic.output.js',
+        'ember-qunit-codemod/transforms/reverse-string/index.js',
+        'ember-qunit-codemod/transforms/reverse-string/test.js',
+      ]);
+    });
+  });
+
   QUnit.module('linting', function(hooks) {
     setupProject(hooks);
 
@@ -533,6 +574,31 @@ QUnit.module('codemod-cli', function(hooks) {
           },
         });
       });
+    });
+  });
+
+  // Local import command test
+  QUnit.module('import', function(hooks) {
+    setupProject(hooks);
+
+    QUnit.test('should import one transform from astexplorer', async function(assert) {
+      let result = await execa(EXECUTABLE_PATH, [
+        'import',
+        'https://astexplorer.net/#/gist/8cc5a4f80787283b994af842d8df5c38/58ceb9e4631064eac99f0cd7f8b35dbabe6b59a8',
+        'reverse-string',
+      ]);
+
+      assert.equal(result.exitCode, 0, 'exited with zero');
+      assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+        '.gitkeep',
+        'reverse-string/',
+        'reverse-string/README.md',
+        'reverse-string/__testfixtures__/',
+        'reverse-string/__testfixtures__/basic.input.js',
+        'reverse-string/__testfixtures__/basic.output.js',
+        'reverse-string/index.js',
+        'reverse-string/test.js',
+      ]);
     });
   });
 });
