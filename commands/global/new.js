@@ -239,9 +239,16 @@ module.exports.handler = async function handler(options) {
     let rawFile = `https://gist.githubusercontent.com/astexplorer/${gist_id}/raw/${gistRevision}/transform.js`;
 
     const request = require('request'); // eslint-disable-line
+
     request.get(rawFile, function(error, response, body) {
       if (!error && response.statusCode == 200) {
-        fs.outputFileSync(`${codemodDir}/index.js`, body, 'utf8');
+        // HACK: Replacing export default with module.exports
+        let _body = body.replace('export default', 'module.exports =');
+
+        // Formatting with prettier to avoid possible lint errors in new project
+        const prettier = require('prettier'); // eslint-disable-line
+        _body = prettier.format(_body, { parser: 'babel', singleQuote: true });
+        fs.outputFileSync(`${codemodDir}/index.js`, _body, 'utf8');
       }
     });
 
@@ -257,8 +264,7 @@ module.exports.handler = async function handler(options) {
       runTransformTest({
         type: 'jscodeshift',
         name: '${codemodName}',
-      });
-    `,
+      });` + '\n',
       'utf8'
     );
 
