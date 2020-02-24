@@ -22,7 +22,7 @@ module.exports.handler = async function handler(options) {
     stripIndent`
       # ${projectName}\n
 
-      A collection of codemod's for ${projectName}.
+      A collection of codemods for ${projectName}.
 
       ## Usage
 
