@@ -16,6 +16,7 @@ module.exports.handler = async function handler(options) {
   const { stripIndent } = require('common-tags');
   const latestVersion = require('latest-version');
   const pkg = require('../../package.json');
+  const cliPath = '/bin/cli.js';
 
   fs.outputFileSync(
     projectName + '/README.md',
@@ -35,6 +36,11 @@ module.exports.handler = async function handler(options) {
 
       yarn global add ${projectName}
       ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
+      \`\`\`
+
+      ## Local Usage
+      \`\`\`
+      npx ${process.cwd()}/${projectName}${cliPath} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
       \`\`\`
 
       ## Transforms
@@ -72,7 +78,7 @@ module.exports.handler = async function handler(options) {
         'update-docs': 'codemod-cli update-docs',
         coveralls: 'cat ./coverage/lcov.info | node node_modules/.bin/coveralls',
       },
-      bin: './bin/cli.js',
+      bin: `.${cliPath}`,
       keywords: ['codemod-cli'],
       dependencies: {
         'codemod-cli': `^${pkg.version}`,
@@ -239,7 +245,7 @@ module.exports.handler = async function handler(options) {
     `
   );
   fs.outputFileSync(
-    projectName + '/bin/cli.js',
+    `${projectName}${cliPath}`,
     stripIndent`
       #!/usr/bin/env node
       'use strict';

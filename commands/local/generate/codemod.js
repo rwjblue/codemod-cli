@@ -70,6 +70,11 @@ module.exports.handler = function handler(options) {
       ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
       \`\`\`
 
+      ## Local Usage
+      \`\`\`
+      npx ${process.cwd()}/${projectName}/bin/cli.js ${codemodName} path/of/files/ or/some**/*glob.js
+      \`\`\`
+
       ## Input / Output
 
       <!--FIXTURES_TOC_START-->
