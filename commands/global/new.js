@@ -40,7 +40,7 @@ module.exports.handler = async function handler(options) {
 
       ## Local Usage
       \`\`\`
-      npx ${process.cwd()}/${projectName}${cliPath} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
+      node .${cliPath} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
       \`\`\`
 
       ## Transforms
