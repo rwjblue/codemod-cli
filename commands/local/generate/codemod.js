@@ -72,7 +72,7 @@ module.exports.handler = function handler(options) {
 
       ## Local Usage
       \`\`\`
-      npx ${process.cwd()}/${projectName}/bin/cli.js ${codemodName} path/of/files/ or/some**/*glob.js
+      node ./bin/cli.js ${codemodName} path/of/files/ or/some**/*glob.js
       \`\`\`
 
       ## Input / Output
