@@ -104,14 +104,14 @@ For more details on node debug, visit the [official](https://nodejs.org/en/docs/
 Node.js debugging guide, and for jest documentation on tests, [here](https://jestjs.io/docs/en/cli)
 
 ```sh
-node --inspect-brk ./node_modules/.bin/codemod-cli -t '<fixture-name>'
+node --inspect-brk ./node_modules/.bin/codemod-cli test -t '<fixture-name>'
 ```
 
 For example, if you want to debug the `null-subexp.input.hbs` fixture or only that particular test case is failing
 because of an issue.
 
 ```sh
-node --inspect-brk ./node_modules/.bin/codemod-cli -t 'null-subexp'
+node --inspect-brk ./node_modules/.bin/codemod-cli test -t 'null-subexp'
 ```
 
 Sometimes we need to use `--runInBand` flag for the debugger statements to be hit when focusing the test with jest 
