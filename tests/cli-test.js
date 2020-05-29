@@ -112,7 +112,7 @@ QUnit.module('codemod-cli', function(hooks) {
     setupProject(hooks);
 
     QUnit.module('codemod', function() {
-      QUnit.test('should generate a codemod', async function(assert) {
+      QUnit.test('should generate a js codemod', async function(assert) {
         let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
         assert.equal(result.exitCode, 0, 'exited with zero');
@@ -127,10 +127,26 @@ QUnit.module('codemod-cli', function(hooks) {
           'main/test.js',
         ]);
       });
+
+      QUnit.test('should generate a hbs codemod', async function(assert) {
+        let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
+
+        assert.equal(result.exitCode, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+          '.gitkeep',
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.hbs',
+          'main/__testfixtures__/basic.output.hbs',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
     });
 
     QUnit.module('fixture', function() {
-      QUnit.test('should generate a fixture for the specified codemod', async function(assert) {
+      QUnit.test('should generate a fixture for the specified js codemod', async function(assert) {
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
         let result = await execa(EXECUTABLE_PATH, [
           'generate',
@@ -149,6 +165,32 @@ QUnit.module('codemod-cli', function(hooks) {
           'main/__testfixtures__/basic.output.js',
           'main/__testfixtures__/this-dot-owner.input.js',
           'main/__testfixtures__/this-dot-owner.output.js',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
+
+      QUnit.test('should generate a fixture for the specified hbs codemod', async function(assert) {
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
+        let result = await execa(EXECUTABLE_PATH, [
+          'generate',
+          'fixture',
+          'main',
+          'this-dot-owner',
+          '--type',
+          'hbs',
+        ]);
+
+        assert.equal(result.exitCode, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+          '.gitkeep',
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.hbs',
+          'main/__testfixtures__/basic.output.hbs',
+          'main/__testfixtures__/this-dot-owner.input.hbs',
+          'main/__testfixtures__/this-dot-owner.output.hbs',
           'main/index.js',
           'main/test.js',
         ]);
@@ -536,6 +578,90 @@ QUnit.module('codemod-cli', function(hooks) {
                 }
               `,
           },
+        });
+      });
+    });
+
+    QUnit.module('runTransform type=template', function(hooks) {
+      let userProject;
+
+      hooks.beforeEach(async function() {
+        // includes simple mustache transform
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
+
+        userProject = await createTempDir();
+        process.chdir(userProject.path());
+      });
+
+      hooks.afterEach(function() {
+        process.chdir(ROOT);
+
+        return userProject.dispose();
+      });
+
+      QUnit.test('runs transform', async function(assert) {
+        userProject.write({
+          foo: {
+            'something.hbs': '{{what}}',
+            'other.hbs': '{{what}}',
+          },
+        });
+
+        await CodemodCLI.runTransform(
+          codemodProject.path('bin'),
+          'main',
+          'foo/*thing.hbs',
+          undefined,
+          'template'
+        );
+
+        assert.deepEqual(userProject.read(), {
+          foo: {
+            'something.hbs': '{{wat-wat}}',
+            'other.hbs': '{{what}}',
+          },
+        });
+      });
+
+      QUnit.test('runs transform with options', async function(assert) {
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
+                  const { getOptions } = require('codemod-cli');
+                  module.exports = function ({ source /*, path*/ }, { parse, visit }) {
+                    const ast = parse(source);
+                    const options = getOptions();
+                  
+                    return visit(ast, (env) => {
+                      let { builders: b } = env.syntax;
+                  
+                      return {
+                        MustacheStatement() {
+                          return b.mustache(b.path(options.biz + options.baz));
+                        },
+                      };
+                    });
+                  };
+              `,
+            },
+          },
+        });
+
+        userProject.write({
+          foo: { 'something.hbs': `{{foo}}` },
+        });
+
+        await CodemodCLI.runTransform(
+          codemodProject.path('bin'),
+          'main',
+          ['--biz', 'A', '--baz', 'B', 'foo/*ing.hbs'],
+          undefined,
+          'template'
+        );
+
+        assert.deepEqual(userProject.read(), {
+          foo: { 'something.hbs': `{{AB}}` },
         });
       });
     });

@@ -8,6 +8,12 @@ module.exports.builder = function builder(yargs) {
     })
     .positional('fixture-name', {
       describe: 'the name of the fixture to generate',
+    })
+    .option('type', {
+      alias: 't',
+      describe: 'choose the fixture type',
+      choices: ['js', 'hbs'],
+      default: 'js',
     });
 };
 
@@ -18,6 +24,6 @@ module.exports.handler = function handler(options) {
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
   let fixturePath = `${codemodDir}/__testfixtures__/${fixtureName}`;
 
-  fs.outputFileSync(`${fixturePath}.input.js`, '');
-  fs.outputFileSync(`${fixturePath}.output.js`, '');
+  fs.outputFileSync(`${fixturePath}.input.${options.type}`, '');
+  fs.outputFileSync(`${fixturePath}.output.${options.type}`, '');
 };
