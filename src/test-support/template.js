@@ -1,16 +1,27 @@
 'use strict';
 
-/* global expect, it, describe, beforeEach, afterEach */
+/* global expect, it, describe */
 
 const fs = require('fs-extra');
 const path = require('path');
 const globby = require('globby');
 const { transformDetails } = require('./utils');
+const { transform, parse } = require('ember-template-recast');
 
-function runTemplateTest(transformFn, input, expectedOutput) {
-  const { transform } = require('ember-template-recast');
-
-  let { code } = transform(input, transformFn);
+function runTemplateTest(plugin, { path, source }, expectedOutput) {
+  const code = plugin(
+    {
+      path,
+      source,
+    },
+    {
+      parse,
+      visit(ast, callback) {
+        const results = transform(ast, callback);
+        return results && results.code;
+      },
+    }
+  );
 
   expect((code || '').trim()).toEqual(expectedOutput.trim());
 }
@@ -18,7 +29,7 @@ function runTemplateTest(transformFn, input, expectedOutput) {
 module.exports = function templateTest(options) {
   let details = transformDetails(options);
 
-  let transform = require(details.transformPath);
+  let plugin = require(details.transformPath);
 
   describe(details.name, function() {
     globby
@@ -30,32 +41,23 @@ module.exports = function templateTest(options) {
       .forEach(filename => {
         let extension = path.extname(filename);
         let testName = filename.replace(`.input${extension}`, '');
+        let testInputPath = path.join(details.fixtureDir, `${testName}${extension}`);
         let inputPath = path.join(details.fixtureDir, `${testName}.input${extension}`);
         let outputPath = path.join(details.fixtureDir, `${testName}.output${extension}`);
-        let optionsPath = path.join(details.fixtureDir, `${testName}.options.json`);
-        let options = fs.pathExistsSync(optionsPath) ? fs.readFileSync(optionsPath) : '{}';
 
         describe(testName, function() {
-          beforeEach(function() {
-            process.env.CODEMOD_CLI_ARGS = options;
-          });
-
-          afterEach(function() {
-            process.env.CODEMOD_CLI_ARGS = '';
-          });
-
           it('transforms correctly', function() {
             runTemplateTest(
-              transform,
-              fs.readFileSync(inputPath, 'utf8'),
+              plugin,
+              { path: testInputPath, source: fs.readFileSync(inputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
 
           it('is idempotent', function() {
             runTemplateTest(
-              transform,
-              fs.readFileSync(outputPath, 'utf8'),
+              plugin,
+              { path: testInputPath, source: fs.readFileSync(inputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
