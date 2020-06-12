@@ -21,8 +21,6 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: install yarn
-      run: npm install -g yarn
     - name: install dependencies
       run: yarn install
     - name: linting
@@ -42,8 +40,6 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
-    - name: install yarn
-      run: npm install --global yarn
     - name: install dependencies
       run: yarn
     - name: test
@@ -58,8 +54,6 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: install yarn
-      run: npm install -g yarn
     - name: install dependencies
       run: yarn install --no-lockfile
     - name: test
