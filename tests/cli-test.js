@@ -12,7 +12,7 @@ const ROOT = process.cwd();
 QUnit.module('codemod-cli', function(hooks) {
   let codemodProject;
 
-  function setupProject(hooks) {
+  function setupProject(hooks, installDeps = false) {
     let sharedProject;
 
     hooks.before(async function() {
@@ -24,13 +24,22 @@ QUnit.module('codemod-cli', function(hooks) {
       process.chdir(ROOT);
     });
 
-    hooks.beforeEach(function() {
+    hooks.beforeEach(async function() {
       codemodProject.copy(sharedProject.path('test-project'));
+
+      const jestPath = `${codemodProject.path()}/node_modules/jest`;
+      const codemodCliPath = `${codemodProject.path()}/node_modules/codemod-cli`;
+
+      if (installDeps) {
+        await execa('yarn');
+        fs.removeSync(jestPath);
+        fs.removeSync(codemodCliPath);
+      }
 
       // setup required dependencies in the project
       fs.ensureDirSync(`${codemodProject.path()}/node_modules`);
-      fs.symlinkSync(`${ROOT}/node_modules/jest`, `${codemodProject.path()}/node_modules/jest`);
-      fs.symlinkSync(PROJECT_ROOT, `${codemodProject.path()}/node_modules/codemod-cli`);
+      fs.symlinkSync(`${ROOT}/node_modules/jest`, jestPath);
+      fs.symlinkSync(PROJECT_ROOT, codemodCliPath);
     });
   }
 
@@ -72,11 +81,7 @@ QUnit.module('codemod-cli', function(hooks) {
   });
 
   QUnit.module('linting', function(hooks) {
-    setupProject(hooks);
-
-    hooks.beforeEach(async function() {
-      await execa('yarn');
-    });
+    setupProject(hooks, true);
 
     QUnit.test('should pass for a basic project', async function(assert) {
       let result = await execa('yarn', ['lint']);
