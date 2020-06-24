@@ -65,7 +65,7 @@
     "walk-sync": "^2.0.2"
   },
   "engines": {
-    "node": "8.* || 10.* || >= 12"
+    "node": "10.* || >= 12"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

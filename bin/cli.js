@@ -15,7 +15,7 @@ const pkgUp = require('pkg-up');
 function insideProject() {
   let nearestPackagePath = pkgUp.sync();
 
-  if (nearestPackagePath === null) {
+  if (!nearestPackagePath) {
     return false;
   }
 
