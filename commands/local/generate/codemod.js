@@ -180,5 +180,7 @@ module.exports.handler = function handler(options) {
       return jsHandler(options);
     case 'hbs':
       return hbsHandler(options);
+    default:
+      throw new Error(`Unknown type: "${options.type}"`);
   }
 };

@@ -9,6 +9,8 @@ function runTransformTest(options) {
       return jscodeshiftTest(options);
     case 'template':
       return templateTest(options);
+    default:
+      throw new Error(`Unknown type passed to runTransformTest: "${options.type}"`);
   }
 }
 

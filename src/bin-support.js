@@ -57,15 +57,11 @@ async function runTemplateTransform(
       expandDirectories: { extensions: extensions.split(',') },
     });
     let transformPath = path.join(binRoot, '..', 'transforms', transformName, 'index.js');
-
-    let templateRecastPkg = require('ember-template-recast/package');
-    let templateRecastPath = path.dirname(require.resolve('ember-template-recast/package'));
-    let binPath = path.join(templateRecastPath, templateRecastPkg.bin);
-
     let binOptions = ['-t', transformPath, ...foundPaths];
 
-    return execa(binPath, binOptions, {
+    return execa('ember-template-recast', binOptions, {
       stdio: 'inherit',
+      preferLocal: true,
       env: {
         CODEMOD_CLI_ARGS: JSON.stringify(options),
       },
@@ -84,6 +80,8 @@ async function runTransform(binRoot, transformName, args, extensions, type = 'js
       return runJsTransform(binRoot, transformName, args, extensions);
     case 'template':
       return runTemplateTransform(binRoot, transformName, args, extensions);
+    default:
+      throw new Error(`Unknown type passed to runTransform: "${type}"`);
   }
 }
 

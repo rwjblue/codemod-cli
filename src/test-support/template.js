@@ -8,10 +8,10 @@ const globby = require('globby');
 const { transformDetails } = require('./utils');
 const { transform, parse } = require('ember-template-recast');
 
-function runTemplateTest(plugin, { path, source }, expectedOutput) {
+function runTemplateTest(plugin, { path: pluginPath, source }, expectedOutput) {
   const code = plugin(
     {
-      path,
+      path: pluginPath,
       source,
     },
     {
@@ -23,7 +23,7 @@ function runTemplateTest(plugin, { path, source }, expectedOutput) {
     }
   );
 
-  expect((code || '').trim()).toEqual(expectedOutput.trim());
+  expect(code || '').toEqual(expectedOutput);
 }
 
 module.exports = function templateTest(options) {
@@ -57,7 +57,7 @@ module.exports = function templateTest(options) {
           it('is idempotent', function() {
             runTemplateTest(
               plugin,
-              { path: testInputPath, source: fs.readFileSync(inputPath, 'utf8') },
+              { path: testInputPath, source: fs.readFileSync(outputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
