@@ -7,9 +7,10 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
-  const { parseTransformArgs } = require('./options-support');
+  const { parseTransformArgs, extractJSCodeShiftOptions } = require('./options-support');
 
   let { paths, options } = parseTransformArgs(args);
+  let { cliOptions, jsCodeShiftOptions } = extractJSCodeShiftOptions(options);
 
   try {
     let foundPaths = await globby(paths, {
@@ -21,12 +22,12 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
 
-    let binOptions = ['-t', transformPath, '--extensions', extensions, ...foundPaths];
+    let binOptions = ['-t', transformPath, '--extensions', extensions, ...jsCodeShiftOptions, ...foundPaths];
 
     return execa(binPath, binOptions, {
       stdio: 'inherit',
       env: {
-        CODEMOD_CLI_ARGS: JSON.stringify(options),
+        CODEMOD_CLI_ARGS: JSON.stringify(cliOptions),
       },
     });
   } catch (error) {

@@ -1,5 +1,7 @@
 const yargs = require('yargs');
 
+const jsCodeShiftOptions = ['ignore-config', 'ignore-pattern'];
+
 function parseTransformArgs(args) {
   let parsedArgs = yargs.parse(args);
   let paths = parsedArgs._;
@@ -20,4 +22,18 @@ function getOptions() {
   }
 }
 
-module.exports = { parseTransformArgs, getOptions };
+function extractJSCodeShiftOptions(options, codeShiftOptions = jsCodeShiftOptions) {
+  let cliOptions = Object.assign({}, options);
+  let jsCodeShiftOptions = [];
+  codeShiftOptions.forEach(option => {
+    if(cliOptions.hasOwnProperty(option)) {
+      let camelCaseOption = option.replace(/-([a-z])/g, (_, up) => up.toUpperCase());
+      jsCodeShiftOptions.push(`--${option}`, options[option]);
+      delete cliOptions[option];
+      delete cliOptions[camelCaseOption];
+    }
+  });
+  return { cliOptions, jsCodeShiftOptions };
+}
+
+module.exports = { parseTransformArgs, getOptions, extractJSCodeShiftOptions };
