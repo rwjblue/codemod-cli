@@ -463,12 +463,12 @@ QUnit.module('codemod-cli', function(hooks) {
           bar: { 'something.hbs': `<Foo />` },
         });
 
-        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
-          'foo/**',
-          'bar/**',
-          '--ignore-pattern',
-          'foo/'
-        ], 'hbs');
+        await CodemodCLI.runTransform(
+          codemodProject.path('bin'),
+          'main',
+          ['foo/**', 'bar/**', '--ignore-pattern', 'foo/'],
+          'hbs'
+        );
 
         assert.deepEqual(userProject.read(), {
           foo: { 'something.hbs': `<Foo />` },
@@ -495,12 +495,12 @@ QUnit.module('codemod-cli', function(hooks) {
           bar: { 'something.hbs': `<Foo />` },
         });
 
-        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
-          'foo/**',
-          'bar/**',
-          '--ignore-config',
-          'config/.gitignore'
-        ], 'hbs');
+        await CodemodCLI.runTransform(
+          codemodProject.path('bin'),
+          'main',
+          ['foo/**', 'bar/**', '--ignore-config', 'config/.gitignore'],
+          'hbs'
+        );
 
         assert.deepEqual(userProject.read(), {
           config: { '.gitignore': `foo/` },

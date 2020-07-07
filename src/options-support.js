@@ -26,7 +26,7 @@ function extractJSCodeShiftOptions(options, codeShiftOptions = jsCodeShiftOption
   let cliOptions = Object.assign({}, options);
   let jsCodeShiftOptions = [];
   codeShiftOptions.forEach(option => {
-    if(cliOptions.hasOwnProperty(option)) {
+    if (Object.prototype.hasOwnProperty.call(cliOptions, option)) {
       let camelCaseOption = option.replace(/-([a-z])/g, (_, up) => up.toUpperCase());
       jsCodeShiftOptions.push(`--${option}`, options[option]);
       delete cliOptions[option];

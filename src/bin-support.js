@@ -22,7 +22,14 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
 
-    let binOptions = ['-t', transformPath, '--extensions', extensions, ...jsCodeShiftOptions, ...foundPaths];
+    let binOptions = [
+      '-t',
+      transformPath,
+      '--extensions',
+      extensions,
+      ...jsCodeShiftOptions,
+      ...foundPaths,
+    ];
 
     return execa(binPath, binOptions, {
       stdio: 'inherit',
