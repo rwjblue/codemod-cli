@@ -2,6 +2,12 @@
 
 const DEFAULT_JS_EXTENSIONS = 'js,ts';
 
+function getTransformPath(binRoot, transformName) {
+  const path = require('path');
+
+  return path.join(binRoot, '..', 'transforms', transformName, 'index.js');
+}
+
 async function runJsTransform(binRoot, transformName, args, extensions = DEFAULT_JS_EXTENSIONS) {
   const globby = require('globby');
   const execa = require('execa');
@@ -15,7 +21,7 @@ async function runJsTransform(binRoot, transformName, args, extensions = DEFAULT
     let foundPaths = await globby(paths, {
       expandDirectories: { extensions: extensions.split(',') },
     });
-    let transformPath = path.join(binRoot, '..', 'transforms', transformName, 'index.js');
+    let transformPath = getTransformPath(binRoot, transformName);
 
     let jscodeshiftPkg = require('jscodeshift/package');
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
@@ -40,13 +46,12 @@ async function runJsTransform(binRoot, transformName, args, extensions = DEFAULT
 async function runTemplateTransform(binRoot, transformName, args) {
   const execa = require('execa');
   const chalk = require('chalk');
-  const path = require('path');
   const { parseTransformArgs } = require('./options-support');
 
   let { paths, options } = parseTransformArgs(args);
 
   try {
-    let transformPath = path.join(binRoot, '..', 'transforms', transformName, 'index.js');
+    let transformPath = getTransformPath(binRoot, transformName);
     let binOptions = ['-t', transformPath, ...paths];
 
     return execa('ember-template-recast', binOptions, {
@@ -64,11 +69,16 @@ async function runTemplateTransform(binRoot, transformName, args) {
   }
 }
 
-async function runTransform(binRoot, transformName, args, extensions, type = 'jscodeshift') {
+async function runTransform(binRoot, transformName, args, extensions) {
+  const { getTransformType } = require('./transform-support');
+
+  let transformPath = getTransformPath(binRoot, transformName);
+  let type = getTransformType(transformPath);
+
   switch (type) {
-    case 'jscodeshift':
+    case 'js':
       return runJsTransform(binRoot, transformName, args, extensions);
-    case 'template':
+    case 'hbs':
       return runTemplateTransform(binRoot, transformName, args);
     default:
       throw new Error(`Unknown type passed to runTransform: "${type}"`);

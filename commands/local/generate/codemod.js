@@ -43,7 +43,9 @@ function jsHandler(options) {
               .join('');
           })
           .toSource();
-      }
+      };
+      
+      module.exports.type = 'js';
   `,
     'utf8'
   );
@@ -54,8 +56,7 @@ function jsHandler(options) {
 
       const { runTransformTest } = require('codemod-cli');
 
-      runTransformTest({
-        type: 'jscodeshift',
+      runTransformTest({ 
         name: '${codemodName}',
       });
     `,
@@ -122,6 +123,8 @@ function hbsHandler(options) {
           };
         });
       };
+      
+      module.exports.type = 'hbs';
   `,
     'utf8'
   );
@@ -133,7 +136,6 @@ function hbsHandler(options) {
       const { runTransformTest } = require('codemod-cli');
       
       runTransformTest({
-        type: 'template',
         name: '${codemodName}',
       });
     `,

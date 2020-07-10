@@ -1,5 +1,15 @@
 'use strict';
 
+function getTransformType(transformPath) {
+  const fs = require('fs-extra');
+
+  if (!fs.existsSync(transformPath)) {
+    throw new Error(`Transform ${transformPath} not found.`);
+  }
+
+  return require(transformPath).type || 'js'; // fallback to 'js' if `type` export does not exist
+}
+
 function getJSCodeshiftParser(api) {
   try {
     let parser = require('recast/parsers/typescript');
@@ -19,4 +29,5 @@ module.exports = {
   jscodeshift: {
     getParser: getJSCodeshiftParser,
   },
+  getTransformType,
 };

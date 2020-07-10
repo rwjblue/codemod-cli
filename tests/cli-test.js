@@ -177,8 +177,6 @@ QUnit.module('codemod-cli', function(hooks) {
           'fixture',
           'main',
           'this-dot-owner',
-          '--type',
-          'hbs',
         ]);
 
         assert.equal(result.exitCode, 0, 'exited with zero');
@@ -582,7 +580,7 @@ QUnit.module('codemod-cli', function(hooks) {
       });
     });
 
-    QUnit.module('runTransform type=template', function(hooks) {
+    QUnit.module('runTransform type=hbs', function(hooks) {
       let userProject;
 
       hooks.beforeEach(async function() {
@@ -607,13 +605,7 @@ QUnit.module('codemod-cli', function(hooks) {
           },
         });
 
-        await CodemodCLI.runTransform(
-          codemodProject.path('bin'),
-          'main',
-          'foo/*thing.hbs',
-          undefined,
-          'template'
-        );
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', 'foo/*thing.hbs');
 
         assert.deepEqual(userProject.read(), {
           foo: {
@@ -643,6 +635,8 @@ QUnit.module('codemod-cli', function(hooks) {
                       };
                     });
                   };
+                  
+                  module.exports.type = 'hbs';
               `,
             },
           },
@@ -652,13 +646,13 @@ QUnit.module('codemod-cli', function(hooks) {
           foo: { 'something.hbs': `{{foo}}` },
         });
 
-        await CodemodCLI.runTransform(
-          codemodProject.path('bin'),
-          'main',
-          ['--biz', 'A', '--baz', 'B', 'foo/*ing.hbs'],
-          undefined,
-          'template'
-        );
+        await CodemodCLI.runTransform(codemodProject.path('bin'), 'main', [
+          '--biz',
+          'A',
+          '--baz',
+          'B',
+          'foo/*ing.hbs',
+        ]);
 
         assert.deepEqual(userProject.read(), {
           foo: { 'something.hbs': `{{AB}}` },
