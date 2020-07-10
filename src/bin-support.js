@@ -1,7 +1,6 @@
 'use strict';
 
 const DEFAULT_JS_EXTENSIONS = 'js,ts';
-const DEFAULT_TEMPLATE_EXTENSIONS = 'hbs';
 
 async function runJsTransform(binRoot, transformName, args, extensions = DEFAULT_JS_EXTENSIONS) {
   const globby = require('globby');
@@ -38,13 +37,7 @@ async function runJsTransform(binRoot, transformName, args, extensions = DEFAULT
   }
 }
 
-async function runTemplateTransform(
-  binRoot,
-  transformName,
-  args,
-  extensions = DEFAULT_TEMPLATE_EXTENSIONS
-) {
-  const globby = require('globby');
+async function runTemplateTransform(binRoot, transformName, args) {
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
@@ -53,11 +46,8 @@ async function runTemplateTransform(
   let { paths, options } = parseTransformArgs(args);
 
   try {
-    let foundPaths = await globby(paths, {
-      expandDirectories: { extensions: extensions.split(',') },
-    });
     let transformPath = path.join(binRoot, '..', 'transforms', transformName, 'index.js');
-    let binOptions = ['-t', transformPath, ...foundPaths];
+    let binOptions = ['-t', transformPath, ...paths];
 
     return execa('ember-template-recast', binOptions, {
       stdio: 'inherit',
@@ -79,7 +69,7 @@ async function runTransform(binRoot, transformName, args, extensions, type = 'js
     case 'jscodeshift':
       return runJsTransform(binRoot, transformName, args, extensions);
     case 'template':
-      return runTemplateTransform(binRoot, transformName, args, extensions);
+      return runTemplateTransform(binRoot, transformName, args);
     default:
       throw new Error(`Unknown type passed to runTransform: "${type}"`);
   }
