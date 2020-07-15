@@ -1,13 +1,14 @@
 'use strict';
 
-const DEFAULT_EXTENSIONS = 'js,ts';
+const DEFAULT_JS_EXTENSIONS = 'js,ts';
 
-async function runTransform(binRoot, transformName, args, extensions = DEFAULT_EXTENSIONS) {
+async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS_EXTENSIONS) {
   const globby = require('globby');
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
   const { parseTransformArgs } = require('./options-support');
+  const { getTransformPath } = require('./transform-support');
 
   let { paths, options } = parseTransformArgs(args);
 
@@ -15,7 +16,7 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
     let foundPaths = await globby(paths, {
       expandDirectories: { extensions: extensions.split(',') },
     });
-    let transformPath = path.join(binRoot, '..', 'transforms', transformName, 'index.js');
+    let transformPath = getTransformPath(root, transformName);
 
     let jscodeshiftPkg = require('jscodeshift/package');
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
@@ -34,6 +35,51 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
     process.exitCode = 1;
 
     throw error;
+  }
+}
+
+async function runTemplateTransform(root, transformName, args) {
+  const execa = require('execa');
+  const chalk = require('chalk');
+  const { parseTransformArgs } = require('./options-support');
+  const { getTransformPath } = require('./transform-support');
+
+  let { paths, options } = parseTransformArgs(args);
+
+  try {
+    let transformPath = getTransformPath(root, transformName);
+    let binOptions = ['-t', transformPath, ...paths];
+
+    return execa('ember-template-recast', binOptions, {
+      stdio: 'inherit',
+      preferLocal: true,
+      env: {
+        CODEMOD_CLI_ARGS: JSON.stringify(options),
+      },
+    });
+  } catch (error) {
+    console.error(chalk.red(error.stack)); // eslint-disable-line no-console
+    process.exitCode = 1;
+
+    throw error;
+  }
+}
+
+async function runTransform(binRoot, transformName, args, extensions) {
+  const { getTransformType, getTransformPath } = require('./transform-support');
+  const path = require('path');
+
+  let root = path.join(binRoot, '..');
+  let transformPath = getTransformPath(root, transformName);
+  let type = getTransformType(transformPath);
+
+  switch (type) {
+    case 'js':
+      return runJsTransform(root, transformName, args, extensions);
+    case 'hbs':
+      return runTemplateTransform(root, transformName, args);
+    default:
+      throw new Error(`Unknown type passed to runTransform: "${type}"`);
   }
 }
 

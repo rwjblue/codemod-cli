@@ -13,11 +13,14 @@ module.exports.builder = function builder(yargs) {
 
 module.exports.handler = function handler(options) {
   const fs = require('fs-extra');
+  const { getTransformType } = require('../../../src/transform-support');
 
   let { codemodName, fixtureName } = options;
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
   let fixturePath = `${codemodDir}/__testfixtures__/${fixtureName}`;
 
-  fs.outputFileSync(`${fixturePath}.input.js`, '');
-  fs.outputFileSync(`${fixturePath}.output.js`, '');
+  let transformType = getTransformType(codemodDir);
+
+  fs.outputFileSync(`${fixturePath}.input.${transformType}`, '');
+  fs.outputFileSync(`${fixturePath}.output.${transformType}`, '');
 };

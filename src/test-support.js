@@ -2,23 +2,12 @@
 
 /* global it, describe, beforeEach, afterEach */
 
-const { runInlineTest } = require('jscodeshift/dist/testUtils');
 const fs = require('fs-extra');
 const path = require('path');
 const globby = require('globby');
+const { transformDetails } = require('./test-support/utils');
 
-function transformDetails(options) {
-  let root = process.cwd() + `/transforms/${options.name}/`;
-
-  return {
-    name: options.name,
-    root,
-    transformPath: root + 'index',
-    fixtureDir: root + '__testfixtures__/',
-  };
-}
-
-function jscodeshiftTest(options) {
+function testRunner(options, runTest) {
   let details = transformDetails(options);
 
   let transform = require(details.transformPath);
@@ -49,18 +38,16 @@ function jscodeshiftTest(options) {
           });
 
           it('transforms correctly', function() {
-            runInlineTest(
+            runTest(
               transform,
-              {},
               { path: testInputPath, source: fs.readFileSync(inputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
           });
 
           it('is idempotent', function() {
-            runInlineTest(
+            runTest(
               transform,
-              {},
               { path: testInputPath, source: fs.readFileSync(outputPath, 'utf8') },
               fs.readFileSync(outputPath, 'utf8')
             );
@@ -71,9 +58,15 @@ function jscodeshiftTest(options) {
 }
 
 function runTransformTest(options) {
-  switch (options.type) {
-    case 'jscodeshift':
-      return jscodeshiftTest(options);
+  let details = transformDetails(options);
+
+  switch (details.transformType) {
+    case 'js':
+      return testRunner(options, require('./test-support/jscodeshift'));
+    case 'hbs':
+      return testRunner(options, require('./test-support/template'));
+    default:
+      throw new Error(`Unknown type of transform: "${details.transformType}"`);
   }
 }
 
