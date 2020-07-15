@@ -1,12 +1,12 @@
 'use strict';
 
+function getTransformPath(root, transformName) {
+  const path = require('path');
+
+  return require.resolve(path.join(root, 'transforms', transformName));
+}
+
 function getTransformType(transformPath) {
-  const fs = require('fs-extra');
-
-  if (!fs.existsSync(transformPath)) {
-    throw new Error(`Transform ${transformPath} not found.`);
-  }
-
   return require(transformPath).type || 'js'; // fallback to 'js' if `type` export does not exist
 }
 
@@ -30,4 +30,5 @@ module.exports = {
     getParser: getJSCodeshiftParser,
   },
   getTransformType,
+  getTransformPath,
 };

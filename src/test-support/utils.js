@@ -1,10 +1,11 @@
 'use strict';
 
 function transformDetails(options) {
-  const { getTransformType } = require('../transform-support');
+  const { getTransformType, getTransformPath } = require('../transform-support');
+  const path = require('path');
 
-  let root = process.cwd() + `/transforms/${options.name}/`;
-  let transformPath = root + 'index.js';
+  let transformPath = getTransformPath(process.cwd(), options.name);
+  let root = path.dirname(transformPath);
   let transformType = getTransformType(transformPath);
 
   return {
@@ -12,7 +13,7 @@ function transformDetails(options) {
     root,
     transformPath,
     transformType,
-    fixtureDir: root + '__testfixtures__/',
+    fixtureDir: path.join(root, '__testfixtures__/'),
   };
 }
 

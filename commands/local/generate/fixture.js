@@ -17,10 +17,9 @@ module.exports.handler = function handler(options) {
 
   let { codemodName, fixtureName } = options;
   let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
-  let codemodTransform = `${codemodDir}/index.js`;
   let fixturePath = `${codemodDir}/__testfixtures__/${fixtureName}`;
 
-  let transformType = getTransformType(codemodTransform);
+  let transformType = getTransformType(codemodDir);
 
   fs.outputFileSync(`${fixturePath}.input.${transformType}`, '');
   fs.outputFileSync(`${fixturePath}.output.${transformType}`, '');
