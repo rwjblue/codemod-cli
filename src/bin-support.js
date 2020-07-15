@@ -7,10 +7,9 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
-  const { parseTransformArgs, extractJSCodeShiftOptions } = require('./options-support');
+  const { parseTransformArgs } = require('./options-support');
 
-  let { paths, options } = parseTransformArgs(args);
-  let { cliOptions, jsCodeShiftOptions } = extractJSCodeShiftOptions(options);
+  let { paths, options, transformerOptions } = parseTransformArgs(args);
 
   try {
     let foundPaths = await globby(paths, {
@@ -27,14 +26,14 @@ async function runTransform(binRoot, transformName, args, extensions = DEFAULT_E
       transformPath,
       '--extensions',
       extensions,
-      ...jsCodeShiftOptions,
+      ...transformerOptions,
       ...foundPaths,
     ];
 
     return execa(binPath, binOptions, {
       stdio: 'inherit',
       env: {
-        CODEMOD_CLI_ARGS: JSON.stringify(cliOptions),
+        CODEMOD_CLI_ARGS: JSON.stringify(options),
       },
     });
   } catch (error) {

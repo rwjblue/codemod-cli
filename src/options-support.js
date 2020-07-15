@@ -2,16 +2,30 @@ const yargs = require('yargs');
 
 const jsCodeShiftOptions = ['ignore-config', 'ignore-pattern'];
 
-function parseTransformArgs(args) {
+function parseTransformArgs(args, codeShiftOptions = jsCodeShiftOptions) {
   let parsedArgs = yargs.parse(args);
   let paths = parsedArgs._;
-  let options = Object.keys(parsedArgs).reduce((acc, key) => {
-    if (!['_', '$0', 'help', 'version'].includes(key)) {
-      acc[key] = parsedArgs[key];
+  let { options, transformerOptions } = Object.keys(parsedArgs).reduce(
+    (acc, key) => {
+      if (!['_', '$0', 'help', 'version'].includes(key)) {
+        let KeyInkebabCase = key.replace(
+          /([a-z])([A-Z])/g,
+          (_, $1, $2) => `${$1}-${$2.toLowerCase()}`
+        );
+        if (codeShiftOptions.includes(key)) {
+          acc.transformerOptions.push(`--${key}`, parsedArgs[key]);
+        } else if (!codeShiftOptions.includes(KeyInkebabCase)) {
+          acc.options[key] = parsedArgs[key];
+        }
+      }
+      return acc;
+    },
+    {
+      options: {},
+      transformerOptions: [],
     }
-    return acc;
-  }, {});
-  return { paths, options };
+  );
+  return { paths, options, transformerOptions };
 }
 
 function getOptions() {
@@ -22,18 +36,4 @@ function getOptions() {
   }
 }
 
-function extractJSCodeShiftOptions(options, codeShiftOptions = jsCodeShiftOptions) {
-  let cliOptions = Object.assign({}, options);
-  let jsCodeShiftOptions = [];
-  codeShiftOptions.forEach(option => {
-    if (Object.prototype.hasOwnProperty.call(cliOptions, option)) {
-      let camelCaseOption = option.replace(/-([a-z])/g, (_, up) => up.toUpperCase());
-      jsCodeShiftOptions.push(`--${option}`, options[option]);
-      delete cliOptions[option];
-      delete cliOptions[camelCaseOption];
-    }
-  });
-  return { cliOptions, jsCodeShiftOptions };
-}
-
-module.exports = { parseTransformArgs, getOptions, extractJSCodeShiftOptions };
+module.exports = { parseTransformArgs, getOptions };
