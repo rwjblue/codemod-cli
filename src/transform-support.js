@@ -1,5 +1,15 @@
 'use strict';
 
+function getTransformPath(root, transformName) {
+  const path = require('path');
+
+  return require.resolve(path.join(root, 'transforms', transformName));
+}
+
+function getTransformType(transformPath) {
+  return require(transformPath).type || 'js'; // fallback to 'js' if `type` export does not exist
+}
+
 function getJSCodeshiftParser(api) {
   try {
     let parser = require('recast/parsers/typescript');
@@ -19,4 +29,6 @@ module.exports = {
   jscodeshift: {
     getParser: getJSCodeshiftParser,
   },
+  getTransformType,
+  getTransformPath,
 };
