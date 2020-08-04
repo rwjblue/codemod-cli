@@ -10,7 +10,7 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
   const { parseTransformArgs } = require('./options-support');
   const { getTransformPath } = require('./transform-support');
 
-  let { paths, options } = parseTransformArgs(args);
+  let { paths, options, transformerOptions } = parseTransformArgs(args);
 
   try {
     let foundPaths = await globby(paths, {
@@ -22,7 +22,14 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
 
-    let binOptions = ['-t', transformPath, '--extensions', extensions, ...foundPaths];
+    let binOptions = [
+      '-t',
+      transformPath,
+      '--extensions',
+      extensions,
+      ...transformerOptions,
+      ...foundPaths,
+    ];
 
     return execa(binPath, binOptions, {
       stdio: 'inherit',

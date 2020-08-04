@@ -485,6 +485,70 @@ QUnit.module('codemod-cli', function(hooks) {
         });
       });
 
+      QUnit.test('should ignore patterns from configuration option', async function(assert) {
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
+                  module.exports = function transformer(file, api) {
+                    return file.source.toUpperCase();
+                  }
+              `,
+            },
+          },
+        });
+
+        userProject.write({
+          foo: { 'something.hbs': `<Foo />` },
+          bar: { 'something.hbs': `<Foo />` },
+        });
+
+        await CodemodCLI.runTransform(
+          codemodProject.path('bin'),
+          'main',
+          ['foo/**', 'bar/**', '--ignore-pattern', 'foo/'],
+          'hbs'
+        );
+
+        assert.deepEqual(userProject.read(), {
+          foo: { 'something.hbs': `<Foo />` },
+          bar: { 'something.hbs': `<FOO />` },
+        });
+      });
+
+      QUnit.test('should ignore patterns from configuration file', async function(assert) {
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
+                  module.exports = function transformer(file, api) {
+                    return file.source.toUpperCase();
+                  }
+              `,
+            },
+          },
+        });
+
+        userProject.write({
+          config: { '.gitignore': `foo/` },
+          foo: { 'something.hbs': `<Foo />` },
+          bar: { 'something.hbs': `<Foo />` },
+        });
+
+        await CodemodCLI.runTransform(
+          codemodProject.path('bin'),
+          'main',
+          ['foo/**', 'bar/**', '--ignore-config', 'config/.gitignore'],
+          'hbs'
+        );
+
+        assert.deepEqual(userProject.read(), {
+          config: { '.gitignore': `foo/` },
+          foo: { 'something.hbs': `<Foo />` },
+          bar: { 'something.hbs': `<FOO />` },
+        });
+      });
+
       QUnit.test('runs transform against class syntax', async function(assert) {
         userProject.write({
           foo: {
