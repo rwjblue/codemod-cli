@@ -16,11 +16,6 @@
   },
   "license": "MIT",
   "author": "Robert Jackson <me@rwjblue.com>",
-  "files": [
-    "src",
-    "bin",
-    "commands"
-  ],
   "main": "src/index.js",
   "bin": {
     "codemod-cli": "./bin/cli.js"
@@ -28,6 +23,11 @@
   "directories": {
     "test": "tests"
   },
+  "files": [
+    "src",
+    "bin",
+    "commands"
+  ],
   "scripts": {
     "lint": "eslint .",
     "lint:js": "eslint .",
@@ -60,8 +60,8 @@
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "qunit": "^2.9.2",
-    "release-it": "^12.4.1",
-    "release-it-lerna-changelog": "^1.0.3",
+    "release-it": "^13.6.5",
+    "release-it-lerna-changelog": "^2.3.0",
     "require-so-slow": "^1.2.0",
     "walk-sync": "^2.0.2"
   },
@@ -74,14 +74,16 @@
   "release-it": {
     "plugins": {
       "release-it-lerna-changelog": {
-        "infile": "CHANGELOG.md"
+        "infile": "CHANGELOG.md",
+        "launchEditor": true
       }
     },
     "git": {
       "tagName": "v${version}"
     },
     "github": {
-      "release": true
+      "release": true,
+      "tokenRef": "GITHUB_AUTH"
     }
   }
 }
