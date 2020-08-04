@@ -1,3 +1,32 @@
+## v3.0.0 (2020-08-04)
+
+#### :boom: Breaking Change
+* [#91](https://github.com/rwjblue/codemod-cli/pull/91) Drop support for Node 13 ([@rwjblue](https://github.com/rwjblue))
+* [#83](https://github.com/rwjblue/codemod-cli/pull/83) Drop node 8 ([@simonihmig](https://github.com/simonihmig))
+
+#### :rocket: Enhancement
+* [#89](https://github.com/rwjblue/codemod-cli/pull/89) Added support for accepting `jscodeshift` ignore options (e.g. `--ignore-config` and `--ignore-pattern`) ([@vinomanick](https://github.com/vinomanick))
+* [#81](https://github.com/rwjblue/codemod-cli/pull/81) Add support for template codemods ([@simonihmig](https://github.com/simonihmig))
+
+#### :memo: Documentation
+* [#80](https://github.com/rwjblue/codemod-cli/pull/80) Fix "Debugging Workflow" examples ([@ro0gr](https://github.com/ro0gr))
+* [#78](https://github.com/rwjblue/codemod-cli/pull/78) [docs] Update the readme blueprint for local usage ([@jsturgis](https://github.com/jsturgis))
+* [#73](https://github.com/rwjblue/codemod-cli/pull/73) [DOCS] Add debugging workflow info docs ([@rajasegar](https://github.com/rajasegar))
+
+#### :house: Internal
+* [#90](https://github.com/rwjblue/codemod-cli/pull/90) Update automated release steps ([@rwjblue](https://github.com/rwjblue))
+* [#87](https://github.com/rwjblue/codemod-cli/pull/87) Add node 14 to test matrix ([@simonihmig](https://github.com/simonihmig))
+
+#### Committers: 7
+- Jeff Sturgis ([@jsturgis](https://github.com/jsturgis))
+- Nathaniel Furniss ([@nlfurniss](https://github.com/nlfurniss))
+- Rajasegar Chandran ([@rajasegar](https://github.com/rajasegar))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- Ruslan Hrabovyi ([@ro0gr](https://github.com/ro0gr))
+- Simon Ihmig ([@simonihmig](https://github.com/simonihmig))
+- Vinodh Kumar ([@vinomanick](https://github.com/vinomanick))
+
+
 ## v2.1.0 (2019-09-23)
 
 #### :rocket: Enhancement
