@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        node: ['10', '12', '13', '14']
+        node: ['10', '12', '14']
         os: [ubuntu-latest, macOS-latest]
 
     steps:
