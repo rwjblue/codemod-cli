@@ -183,6 +183,7 @@ module.exports.handler = async function handler(options) {
         push:
           branches:
             - master
+            - main
             - 'v*' # older version branches
           tags:
             - '*'
@@ -200,10 +201,8 @@ module.exports.handler = async function handler(options) {
           - uses: actions/setup-node@v1
             with:
               node-version: 12.x
-          - name: install yarn
-            run: npm install -g yarn
           - name: install dependencies
-            run: yarn install
+            run: yarn install --frozen-lockfile
           - name: linting
             run: yarn lint
 
@@ -213,17 +212,15 @@ module.exports.handler = async function handler(options) {
 
           strategy:
             matrix:
-              node: ['^8.12.0', '10', '12']
+              node: ['10', '12', '14']
 
           steps:
           - uses: actions/checkout@v1
           - uses: actions/setup-node@v1
             with:
               node-version: \${{ matrix.node }}
-          - name: install yarn
-            run: npm install --global yarn
           - name: install dependencies
-            run: yarn
+            run: yarn install --frozen-lockfile
           - name: test
             run: yarn test
 
@@ -236,8 +233,6 @@ module.exports.handler = async function handler(options) {
           - uses: actions/setup-node@v1
             with:
               node-version: '12.x'
-          - name: install yarn
-            run: npm install -g yarn
           - name: install dependencies
             run: yarn install --no-lockfile
           - name: test
