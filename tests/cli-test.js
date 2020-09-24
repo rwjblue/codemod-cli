@@ -69,7 +69,6 @@ QUnit.module('codemod-cli', function(hooks) {
         'ember-qunit-codemod/.github/workflows/ci.yml',
         'ember-qunit-codemod/.gitignore',
         'ember-qunit-codemod/.prettierrc',
-        'ember-qunit-codemod/.travis.yml',
         'ember-qunit-codemod/README.md',
         'ember-qunit-codemod/bin/',
         'ember-qunit-codemod/bin/cli.js',

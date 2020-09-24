@@ -146,35 +146,6 @@ module.exports.handler = async function handler(options) {
   );
 
   fs.outputFileSync(
-    projectName + '/.travis.yml',
-    stripIndent`
-      ---
-      language: node_js
-      node_js:
-        - "8"
-
-      sudo: false
-      dist: trusty
-
-      cache:
-        yarn: true
-
-      before_install:
-        - curl -o- -L https://yarnpkg.com/install.sh | bash
-        - export PATH=$HOME/.yarn/bin:$PATH
-
-      install:
-        - yarn install
-
-      script:
-        - yarn lint
-        - yarn test:coverage
-
-      after_success:
-        - yarn coveralls
-    `
-  );
-  fs.outputFileSync(
     projectName + '/.github/workflows/ci.yml',
     stripIndent`
       name: CI
