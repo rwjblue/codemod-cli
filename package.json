@@ -63,7 +63,7 @@
     "release-it": "^13.6.5",
     "release-it-lerna-changelog": "^2.4.0",
     "require-so-slow": "^2.0.2",
-    "walk-sync": "^2.0.2"
+    "walk-sync": "^2.2.0"
   },
   "engines": {
     "node": "10.* || 12.* || >= 14"
