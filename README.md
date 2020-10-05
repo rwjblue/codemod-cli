@@ -28,10 +28,11 @@ ready to help you manage your codemods.
 Once you have a project, you can generate a new codemod:
 
 ```
-codemod-cli generate codemod <name of codemod>
+codemod-cli generate codemod <name of codemod> // jscodeshift js codemod
+codemod-cli generate codemod <name of codemod> -t=hbs // ember-template-recast hbs codemod
 ```
 
-This will setup a new jscodeshift codemod within your project at `transforms/<name of codemod>/index.js`
+This will setup a new codemod within your project at `transforms/<name of codemod>/index.js`
 along with a test harness, README, fixture directory, and an initial set of input/output fixtures.
 
 Once you have tweaked your codemod and its fixtures to your liking, it is time to run your tests:
