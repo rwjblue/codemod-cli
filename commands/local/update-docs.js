@@ -40,30 +40,46 @@ function updateTransformREADME(transformName) {
     return;
   }
 
-  fs.readdirSync(fixtureDir)
-    .filter(filename => /\.input$/.test(path.basename(filename, path.extname(filename))))
-    .forEach(filename => {
-      let extension = path.extname(filename);
-      let testName = filename.replace(`.input${extension}`, '');
-      let inputPath = path.join(fixtureDir, `${testName}.input${extension}`);
-      let outputPath = path.join(fixtureDir, `${testName}.output${extension}`);
+  const testMap = fs.readdirSync(fixtureDir).reduce((_hash, filename) => {
+    const extension = path.extname(filename);
+    const validFilename = path.basename(filename).match(/input|output+(?=\.)/);
+    if (!validFilename) {
+      return _hash;
+    }
+    const testName = filename.slice(0, validFilename.index - 1);
+    const testType = validFilename[0];
 
-      toc.push(`* [${testName}](#${testName})`);
-      details.push(
-        '---',
-        `<a id="${testName}">**${testName}**</a>`,
-        '',
-        `**Input** (<small>[${testName}.input${extension}](${inputPath})</small>):`,
-        '```' + extension.slice(1),
-        fs.readFileSync(inputPath),
-        '```',
-        '',
-        `**Output** (<small>[${testName}.output${extension}](${outputPath})</small>):`,
-        '```' + extension.slice(1),
-        fs.readFileSync(outputPath),
-        '```'
-      );
-    });
+    if (!_hash[testName]) {
+      _hash[testName] = {};
+    }
+
+    _hash[testName][testType] = `${testName}.${testType}${extension}`;
+
+    return _hash;
+  }, {});
+
+  Object.entries(testMap).forEach(([testName, testPaths]) => {
+    let inputExtension = path.extname(testPaths.input);
+    let outputExtension = path.extname(testPaths.output);
+    let inputPath = path.join(fixtureDir, testPaths.input);
+    let outputPath = path.join(fixtureDir, testPaths.output);
+
+    toc.push(`* [${testName}](#${testName})`);
+    details.push(
+      '---',
+      `<a id="${testName}">**${testName}**</a>`,
+      '',
+      `**Input** (<small>[${testPaths.input}](${inputPath})</small>):`,
+      '```' + inputExtension.slice(1),
+      fs.readFileSync(inputPath),
+      '```',
+      '',
+      `**Output** (<small>[${testPaths.output}](${outputPath})</small>):`,
+      '```' + outputExtension.slice(1),
+      fs.readFileSync(outputPath),
+      '```'
+    );
+  });
 
   let transformREADMEPath = `transforms/${transformName}/README.md`;
 
