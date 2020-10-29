@@ -1,3 +1,21 @@
+## v3.1.0 (2020-10-29)
+
+#### :rocket: Enhancement
+* [#95](https://github.com/rwjblue/codemod-cli/pull/95) Remove .travis.yml from newly generated projects. ([@rwjblue](https://github.com/rwjblue))
+
+#### :bug: Bug Fix
+* [#121](https://github.com/rwjblue/codemod-cli/pull/121) Updated `update-docs` command to respect mixed file type extensions ([@jwlawrence](https://github.com/jwlawrence))
+* [#94](https://github.com/rwjblue/codemod-cli/pull/94) Fixup GH Actions configuration for new projects. ([@rwjblue](https://github.com/rwjblue))
+
+#### :memo: Documentation
+* [#118](https://github.com/rwjblue/codemod-cli/pull/118) Add some docs on how to generate template codemods ([@patocallaghan](https://github.com/patocallaghan))
+
+#### Committers: 3
+- Joshua Lawrence ([@jwlawrence](https://github.com/jwlawrence))
+- Pat O'Callaghan ([@patocallaghan](https://github.com/patocallaghan))
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+
+
 ## v3.0.0 (2020-08-04)
 
 #### :boom: Breaking Change
