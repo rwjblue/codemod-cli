@@ -105,6 +105,37 @@ QUnit.module('codemod-cli', function(hooks) {
       assert.ok(README.includes('* [foo](transforms/foo/README.md'), 'foo link');
       assert.ok(README.includes('* [bar](transforms/bar/README.md'), 'bar link');
     });
+
+    QUnit.test('should allow different input/output extensions', async function(assert) {
+      codemodProject.write({
+        transforms: {
+          main: {
+            __testfixtures__: {
+              'basic.input.js': '"starting content";',
+              'basic.output.hbs': '"different content";',
+            },
+            'README.md': `
+              <!--FIXTURES_TOC_START-->
+              <!--FIXTURES_TOC_END-->
+              <!--FIXTURES_CONTENT_START-->
+              <!--FIXTURES_CONTENT_END-->
+            `,
+          },
+        },
+      });
+
+      await execa(EXECUTABLE_PATH, ['update-docs']);
+
+      let README = fs.readFileSync(codemodProject.path('transforms/main/README.md'), 'utf8');
+      assert.ok(
+        README.includes('[basic.input.js](transforms/main/__testfixtures__/basic.input.js)'),
+        'input link'
+      );
+      assert.ok(
+        README.includes('[basic.output.hbs](transforms/main/__testfixtures__/basic.output.hbs)'),
+        'output link'
+      );
+    });
   });
 
   QUnit.module('generate', function(hooks) {
@@ -687,10 +718,10 @@ QUnit.module('codemod-cli', function(hooks) {
                   module.exports = function ({ source /*, path*/ }, { parse, visit }) {
                     const ast = parse(source);
                     const options = getOptions();
-                  
+
                     return visit(ast, (env) => {
                       let { builders: b } = env.syntax;
-                  
+
                       return {
                         MustacheStatement() {
                           return b.mustache(b.path(options.biz + options.baz));
@@ -698,7 +729,7 @@ QUnit.module('codemod-cli', function(hooks) {
                       };
                     });
                   };
-                  
+
                   module.exports.type = 'hbs';
               `,
             },
