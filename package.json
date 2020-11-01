@@ -59,7 +59,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^26.6.1",
     "prettier": "^1.18.2",
-    "qunit": "^2.11.2",
+    "qunit": "^2.11.3",
     "release-it": "^14.2.0",
     "release-it-lerna-changelog": "^3.0.0",
     "require-so-slow": "^2.0.2",
