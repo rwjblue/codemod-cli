@@ -1,6 +1,14 @@
 const yargs = require('yargs');
 
-const jsCodeShiftOptions = ['ignore-config', 'ignore-pattern'];
+const jsCodeShiftOptions = [
+  'dry',
+  'ignore-config',
+  'ignore-pattern',
+  'print',
+  'run-in-band',
+  'silent',
+  'verbose',
+];
 
 function parseTransformArgs(args, codeShiftOptions = jsCodeShiftOptions) {
   let parsedArgs = yargs.parse(args);
