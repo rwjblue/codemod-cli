@@ -1,3 +1,12 @@
+## v3.1.1 (2020-12-01)
+
+#### :bug: Bug Fix
+* [#128](https://github.com/rwjblue/codemod-cli/pull/128) Added some more default options for jscodeshift command line args ([@jwlawrence](https://github.com/jwlawrence))
+
+#### Committers: 1
+- Joshua Lawrence ([@jwlawrence](https://github.com/jwlawrence))
+
+
 ## v3.1.0 (2020-10-29)
 
 #### :rocket: Enhancement
