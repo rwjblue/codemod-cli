@@ -62,7 +62,7 @@
     "qunit": "^2.13.0",
     "release-it": "^14.2.0",
     "release-it-lerna-changelog": "^3.1.0",
-    "require-so-slow": "^2.0.2",
+    "require-so-slow": "^2.0.4",
     "walk-sync": "^2.2.0"
   },
   "engines": {
