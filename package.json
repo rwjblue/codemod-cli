@@ -35,7 +35,7 @@
     "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
-    "@babel/parser": "^7.12.7",
+    "@babel/parser": "^7.12.11",
     "chalk": "^4.1.0",
     "common-tags": "^1.8.0",
     "ember-template-recast": "^4.1.4",
