@@ -57,11 +57,9 @@ async function runTemplateTransform(root, transformName, args) {
   try {
     let transformPath = getTransformPath(root, transformName);
     let binOptions = ['-t', transformPath, ...paths];
-    let templateRecastBinPath = path.join(
-      path.dirname(require.resolve('ember-template-recast/package.json')),
-      'bin',
-      'ember-template-recast.js'
-    );
+    let templateRecastDir = path.dirname(require.resolve('ember-template-recast/package.json'));
+    let templateRecastPkg = require('ember-template-recast/package');
+    let templateRecastBinPath = path.join(templateRecastDir, templateRecastPkg.bin);
 
     return execa(templateRecastBinPath, binOptions, {
       stdio: 'inherit',
