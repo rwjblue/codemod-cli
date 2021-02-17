@@ -39,7 +39,7 @@
     "chalk": "^4.1.0",
     "common-tags": "^1.8.0",
     "ember-template-recast": "^4.1.4",
-    "execa": "^4.1.0",
+    "execa": "^5.0.0",
     "fs-extra": "^8.1.0",
     "globby": "^11.0.2",
     "import-cwd": "^3.0.0",
