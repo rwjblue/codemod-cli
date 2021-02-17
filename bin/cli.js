@@ -4,7 +4,7 @@
 if (process.env.REQUIRE_TRACE) {
   // eslint-disable-next-line node/no-unpublished-require
   const requireSoSlow = require('require-so-slow');
-  process.on('exit', function() {
+  process.on('exit', function () {
     requireSoSlow.write('require-trace.trace');
   });
 }

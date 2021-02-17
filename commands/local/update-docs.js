@@ -8,10 +8,10 @@ function updateProjectREADME() {
 
   let transforms = fs
     .readdirSync('transforms')
-    .filter(file => fs.lstatSync(`transforms/${file}`).isDirectory());
+    .filter((file) => fs.lstatSync(`transforms/${file}`).isDirectory());
 
   let readmeContent = transforms
-    .map(name => `* [${name}](transforms/${name}/README.md)`)
+    .map((name) => `* [${name}](transforms/${name}/README.md)`)
     .join('\n');
 
   fs.writeFileSync(
@@ -105,7 +105,7 @@ function updateTransformREADMEs() {
   const fs = require('fs-extra');
 
   fs.readdirSync('transforms')
-    .filter(file => fs.lstatSync(`transforms/${file}`).isDirectory())
+    .filter((file) => fs.lstatSync(`transforms/${file}`).isDirectory())
     .forEach(updateTransformREADME);
 }
 

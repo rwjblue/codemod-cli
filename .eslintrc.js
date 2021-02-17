@@ -4,19 +4,12 @@ module.exports = {
   root: true,
   parserOptions: {
     ecmaVersion: 2017,
-    sourceType: 'module'
+    sourceType: 'module',
   },
-  plugins: [
-    'prettier',
-    'node',
-  ],
-  extends: [
-    'eslint:recommended',
-    'plugin:node/recommended',
-    'plugin:prettier/recommended',
-  ],
+  plugins: ['prettier', 'node'],
+  extends: ['eslint:recommended', 'plugin:node/recommended', 'plugin:prettier/recommended'],
   env: {
-    node: true
+    node: true,
   },
   rules: {
     'node/no-unsupported-features': ['error', { ignores: ['modules'] }],
@@ -27,8 +20,8 @@ module.exports = {
       files: ['tests/**'],
 
       env: {
-        qunit: true
-      }
-    }
-  ]
+        qunit: true,
+      },
+    },
+  ],
 };
