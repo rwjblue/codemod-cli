@@ -48,6 +48,7 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
 async function runTemplateTransform(root, transformName, args) {
   const execa = require('execa');
   const chalk = require('chalk');
+  const path = require('path');
   const { parseTransformArgs } = require('./options-support');
   const { getTransformPath } = require('./transform-support');
 
@@ -56,10 +57,14 @@ async function runTemplateTransform(root, transformName, args) {
   try {
     let transformPath = getTransformPath(root, transformName);
     let binOptions = ['-t', transformPath, ...paths];
+    let templateRecastBinPath = path.join(
+      path.dirname(require.resolve('ember-template-recast/package.json')),
+      'bin',
+      'ember-template-recast.js'
+    );
 
-    return execa('ember-template-recast', binOptions, {
+    return execa(templateRecastBinPath, binOptions, {
       stdio: 'inherit',
-      preferLocal: true,
       env: {
         CODEMOD_CLI_ARGS: JSON.stringify(options),
       },
