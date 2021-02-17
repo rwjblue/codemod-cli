@@ -1,3 +1,17 @@
+## v3.1.2 (2021-02-17)
+
+#### :bug: Bug Fix
+* [#156](https://github.com/rwjblue/codemod-cli/pull/156) Ensure the correct `ember-template-recast` command is found for template based codemods ([@zhanwang626](https://github.com/zhanwang626))
+
+#### :house: Internal
+* [#158](https://github.com/rwjblue/codemod-cli/pull/158) Remove macOS-latest from GitHub Actions config. ([@rwjblue](https://github.com/rwjblue))
+* [#157](https://github.com/rwjblue/codemod-cli/pull/157) Update dependencies to latest ([@rwjblue](https://github.com/rwjblue))
+
+#### Committers: 2
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- Zhan Wang ([@zhanwang626](https://github.com/zhanwang626))
+
+
 ## v3.1.1 (2020-12-01)
 
 #### :bug: Bug Fix
