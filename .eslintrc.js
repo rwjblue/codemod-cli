@@ -13,13 +13,12 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:node/recommended',
-    'prettier',
+    'plugin:prettier/recommended',
   ],
   env: {
     node: true
   },
   rules: {
-    'prettier/prettier': 'error',
     'node/no-unsupported-features': ['error', { ignores: ['modules'] }],
   },
 
