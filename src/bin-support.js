@@ -15,6 +15,7 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
   try {
     let foundPaths = await globby(paths, {
       expandDirectories: { extensions: extensions.split(',') },
+      gitignore: true,
     });
     let transformPath = getTransformPath(root, transformName);
 
