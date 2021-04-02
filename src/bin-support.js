@@ -7,6 +7,8 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
+  const { Readable } = require("stream")
+  const fs = require('fs');
   const { parseTransformArgs } = require('./options-support');
   const { getTransformPath } = require('./transform-support');
 
@@ -19,6 +21,7 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
     let transformPath = getTransformPath(root, transformName);
 
     let jscodeshiftPkg = require('jscodeshift/package');
+
     let jscodeshiftPath = path.dirname(require.resolve('jscodeshift/package'));
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
 
@@ -28,15 +31,26 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
       '--extensions',
       extensions,
       ...transformerOptions,
-      ...foundPaths,
+      '--stdin', // tell jscodeshift to read the list of files from stdin
     ];
 
-    return execa(binPath, binOptions, {
-      stdio: 'inherit',
+    let handle = execa(binPath, binOptions, {
+      stdout: 'inherit',
+      stderr: 'inherit',
+      stdin: 'pipe', // must be pipe for the below
       env: {
         CODEMOD_CLI_ARGS: JSON.stringify(options),
       },
     });
+
+    // https://github.com/ember-codemods/es5-getter-ember-codemod/issues/34
+    let pathsStream = new Readable();
+    pathsStream.push(foundPaths.join('\n'));
+    pathsStream.push(null);
+    pathsStream.pipe(handle.stdin);
+
+    return await handle;
+
   } catch (error) {
     console.error(chalk.red(error.stack)); // eslint-disable-line no-console
     process.exitCode = 1;
