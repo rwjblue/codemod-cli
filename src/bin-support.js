@@ -7,8 +7,7 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
-  const { Readable } = require("stream")
-  const fs = require('fs');
+  const { Readable } = require('stream');
   const { parseTransformArgs } = require('./options-support');
   const { getTransformPath } = require('./transform-support');
 
@@ -50,7 +49,6 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
     pathsStream.pipe(handle.stdin);
 
     return await handle;
-
   } catch (error) {
     console.error(chalk.red(error.stack)); // eslint-disable-line no-console
     process.exitCode = 1;
