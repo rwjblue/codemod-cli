@@ -158,6 +158,27 @@ QUnit.module('codemod-cli', function (hooks) {
         ]);
       });
 
+      QUnit.test('should generate a codemod in a custom directory', async function(assert) {
+        let result = await execa(EXECUTABLE_PATH, [
+          'generate',
+          'codemod',
+          'main',
+          '--codemod-dir',
+          'other-dir',
+        ]);
+
+        assert.equal(result.exitCode, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('other-dir')), [
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.js',
+          'main/__testfixtures__/basic.output.js',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
+
       QUnit.test('should generate a hbs codemod', async function (assert) {
         let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
 

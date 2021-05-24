@@ -6,6 +6,11 @@ module.exports.builder = function builder(yargs) {
     .positional('codemod-name', {
       describe: 'the name of the codemod to generate',
     })
+    .option('codemod-dir', {
+      type: 'string',
+      describe: 'the path to the transform directory',
+      default: `./transforms/`,
+    })
     .option('type', {
       alias: 't',
       describe: 'choose the transform type',
@@ -16,13 +21,14 @@ module.exports.builder = function builder(yargs) {
 
 function jsHandler(options) {
   const fs = require('fs-extra');
+  const path = require('path');
   const { stripIndent } = require('common-tags');
   const importCwd = require('import-cwd');
   const generateFixture = require('./fixture').handler;
 
   let { codemodName } = options;
   let projectName = importCwd('./package.json').name;
-  let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
+  let codemodDir = path.join(options.codemodDir, codemodName);
 
   fs.outputFileSync(
     `${codemodDir}/index.js`,
@@ -94,7 +100,12 @@ function jsHandler(options) {
     'utf8'
   );
 
-  generateFixture({ codemodName, fixtureName: 'basic', type: options.type });
+  generateFixture({
+    codemodName,
+    codemodDir: options.codemodDir,
+    fixtureName: 'basic',
+    type: options.type,
+  });
 }
 
 function hbsHandler(options) {
@@ -173,7 +184,12 @@ function hbsHandler(options) {
     'utf8'
   );
 
-  generateFixture({ codemodName, fixtureName: 'basic', type: options.type });
+  generateFixture({
+    codemodName,
+    codemodDir: options.codemodDir,
+    fixtureName: 'basic',
+    type: options.type,
+  });
 }
 
 module.exports.handler = function handler(options) {
