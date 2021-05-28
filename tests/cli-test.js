@@ -158,6 +158,27 @@ QUnit.module('codemod-cli', function (hooks) {
         ]);
       });
 
+      QUnit.test('should generate a codemod in a custom directory', async function (assert) {
+        let result = await execa(EXECUTABLE_PATH, [
+          'generate',
+          'codemod',
+          'main',
+          '--codemod-dir',
+          'other-dir',
+        ]);
+
+        assert.equal(result.exitCode, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('other-dir')), [
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.js',
+          'main/__testfixtures__/basic.output.js',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
+
       QUnit.test('should generate a hbs codemod', async function (assert) {
         let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
 
@@ -232,6 +253,27 @@ QUnit.module('codemod-cli', function (hooks) {
       QUnit.test('should pass for a basic project with an empty codemod', async function (assert) {
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
         await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
+
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.exitCode, 0, 'exited with zero');
+      });
+
+      QUnit.test('should pass for an empty codemod in a custom directory', async function (assert) {
+        await execa(EXECUTABLE_PATH, [
+          'generate',
+          'codemod',
+          'main',
+          '--codemod-dir',
+          'other-transform-path',
+        ]);
+        await execa(EXECUTABLE_PATH, [
+          'generate',
+          'fixture',
+          'main',
+          'this-dot-owner',
+          '--codemod-dir',
+          'other-transform-path',
+        ]);
 
         let result = await execa(EXECUTABLE_PATH, ['test']);
         assert.equal(result.exitCode, 0, 'exited with zero');
@@ -407,6 +449,32 @@ QUnit.module('codemod-cli', function (hooks) {
       });
 
       await execa(codemodProject.path('bin/cli.js'), ['main', 'foo/*thing.js']);
+
+      assert.deepEqual(userProject.read(), {
+        foo: {
+          'something.js': 'let halb = rab',
+          'other.js': 'let blah = bar',
+        },
+      });
+    });
+
+    QUnit.test('works with custom codemod directory', async function (assert) {
+      userProject.write({
+        foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
+      });
+
+      await execa(
+        EXECUTABLE_PATH,
+        ['generate', 'codemod', 'secondary', '--codemod-dir', 'other-dir'],
+        {
+          cwd: codemodProject.path(),
+        }
+      );
+
+      await execa(codemodProject.path('bin/cli.js'), [
+        codemodProject.path('./other-dir/secondary/index.js'),
+        'foo/*thing.js',
+      ]);
 
       assert.deepEqual(userProject.read(), {
         foo: {

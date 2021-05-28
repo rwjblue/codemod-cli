@@ -8,15 +8,21 @@ module.exports.builder = function builder(yargs) {
     })
     .positional('fixture-name', {
       describe: 'the name of the fixture to generate',
+    })
+    .option('codemod-dir', {
+      type: 'string',
+      describe: 'the path to the transform directory',
+      default: `./transforms/`,
     });
 };
 
 module.exports.handler = function handler(options) {
   const fs = require('fs-extra');
+  const path = require('path');
   const { getTransformType } = require('../../../src/transform-support');
 
   let { codemodName, fixtureName } = options;
-  let codemodDir = `${process.cwd()}/transforms/${codemodName}`;
+  let codemodDir = path.resolve(process.cwd(), path.join(options.codemodDir, codemodName));
   let fixturePath = `${codemodDir}/__testfixtures__/${fixtureName}`;
 
   let transformType = getTransformType(codemodDir);

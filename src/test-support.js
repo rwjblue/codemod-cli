@@ -18,9 +18,7 @@ function testRunner(options, runTest) {
         cwd: details.fixtureDir,
         absolute: true,
       })
-      .map((entry) =>
-        entry.slice(entry.indexOf('__testfixtures__') + '__testfixtures__'.length + 1)
-      )
+      .map((entry) => entry.slice(details.fixtureDir.length))
       .forEach((filename) => {
         let extension = path.extname(filename);
         let testName = filename.replace(`.input${extension}`, '');

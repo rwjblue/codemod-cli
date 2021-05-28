@@ -3,6 +3,11 @@
 function getTransformPath(root, transformName) {
   const path = require('path');
 
+  // transformName **IS** a valid path, no need to resolve manually
+  if (transformName.startsWith('.') || transformName.startsWith('/')) {
+    return transformName;
+  }
+
   return require.resolve(path.join(root, 'transforms', transformName));
 }
 
