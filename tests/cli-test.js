@@ -444,6 +444,25 @@ QUnit.module('codemod-cli', function (hooks) {
         },
       });
     });
+
+    QUnit.test('works with custom codemod directory', async function (assert) {
+      userProject.write({
+        foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
+      });
+
+      await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'secondary', '--codemod-dir', 'other-dir'], {
+        cwd: codemodProject.path(),
+      });
+
+      await execa(codemodProject.path('bin/cli.js'), [codemodProject.path('./other-dir/secondary/index.js'), 'foo/*thing.js']);
+
+      assert.deepEqual(userProject.read(), {
+        foo: {
+          'something.js': 'let halb = rab',
+          'other.js': 'let blah = bar',
+        },
+      });
+    });
   });
 
   QUnit.module('programmatic API', function (hooks) {
