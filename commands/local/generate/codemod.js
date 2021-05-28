@@ -64,6 +64,7 @@ function jsHandler(options) {
 
       runTransformTest({ 
         name: '${codemodName}',
+        path: require.resolve('./index.js'),
       });
     `,
     'utf8'

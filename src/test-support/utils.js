@@ -4,7 +4,7 @@ function transformDetails(options) {
   const { getTransformType, getTransformPath } = require('../transform-support');
   const path = require('path');
 
-  let transformPath = getTransformPath(process.cwd(), options.name);
+  let transformPath = options.path ? options.path : getTransformPath(process.cwd(), options.name);
   let root = path.dirname(transformPath);
   let transformType = getTransformType(transformPath);
 

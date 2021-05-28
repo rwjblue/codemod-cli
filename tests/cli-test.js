@@ -258,6 +258,14 @@ QUnit.module('codemod-cli', function (hooks) {
         assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
+      QUnit.test('should pass for an empty codemod in a custom directory', async function (assert) {
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--codemod-dir', 'other-transform-path']);
+        await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner', '--codemod-dir', 'other-transform-path']);
+
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.exitCode, 0, 'exited with zero');
+      });
+
       QUnit.test('should fail when input and output do not match', async function (assert) {
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
         await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
