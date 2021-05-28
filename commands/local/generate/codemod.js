@@ -65,6 +65,7 @@ function jsHandler(options) {
       runTransformTest({ 
         name: '${codemodName}',
         path: require.resolve('./index.js'),
+        fixtureDir: \`\${__dirname}/__testfixtures__/\`,
       });
     `,
     'utf8'
