@@ -158,7 +158,7 @@ QUnit.module('codemod-cli', function (hooks) {
         ]);
       });
 
-      QUnit.test('should generate a codemod in a custom directory', async function(assert) {
+      QUnit.test('should generate a codemod in a custom directory', async function (assert) {
         let result = await execa(EXECUTABLE_PATH, [
           'generate',
           'codemod',
@@ -259,8 +259,21 @@ QUnit.module('codemod-cli', function (hooks) {
       });
 
       QUnit.test('should pass for an empty codemod in a custom directory', async function (assert) {
-        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--codemod-dir', 'other-transform-path']);
-        await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner', '--codemod-dir', 'other-transform-path']);
+        await execa(EXECUTABLE_PATH, [
+          'generate',
+          'codemod',
+          'main',
+          '--codemod-dir',
+          'other-transform-path',
+        ]);
+        await execa(EXECUTABLE_PATH, [
+          'generate',
+          'fixture',
+          'main',
+          'this-dot-owner',
+          '--codemod-dir',
+          'other-transform-path',
+        ]);
 
         let result = await execa(EXECUTABLE_PATH, ['test']);
         assert.equal(result.exitCode, 0, 'exited with zero');
@@ -450,11 +463,18 @@ QUnit.module('codemod-cli', function (hooks) {
         foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
       });
 
-      await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'secondary', '--codemod-dir', 'other-dir'], {
-        cwd: codemodProject.path(),
-      });
+      await execa(
+        EXECUTABLE_PATH,
+        ['generate', 'codemod', 'secondary', '--codemod-dir', 'other-dir'],
+        {
+          cwd: codemodProject.path(),
+        }
+      );
 
-      await execa(codemodProject.path('bin/cli.js'), [codemodProject.path('./other-dir/secondary/index.js'), 'foo/*thing.js']);
+      await execa(codemodProject.path('bin/cli.js'), [
+        codemodProject.path('./other-dir/secondary/index.js'),
+        'foo/*thing.js',
+      ]);
 
       assert.deepEqual(userProject.read(), {
         foo: {
