@@ -1,0 +1,28 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "03:00"
+    timezone: America/New_York
+  open-pull-requests-limit: 10
+  versioning-strategy: increase
+  ignore:
+  - dependency-name: fs-extra
+    versions:
+    - 9.0.1
+    - 9.1.0
+  - dependency-name: execa
+    versions:
+    - 5.0.0
+  - dependency-name: eslint
+    versions:
+    - 7.16.0
+    - 7.19.0
+  - dependency-name: prettier
+    versions:
+    - 2.2.1
+  - dependency-name: ember-template-recast
+    versions:
+    - 5.0.1
