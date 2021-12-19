@@ -7,6 +7,7 @@ const jsCodeShiftOptions = [
   'print',
   'run-in-band',
   'silent',
+  'stdin',
   'verbose',
 ];
 
