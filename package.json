@@ -45,7 +45,7 @@
     "import-cwd": "^3.0.0",
     "import-local": "^3.1.0",
     "jscodeshift": "^0.13.1",
-    "latest-version": "^5.1.0",
+    "latest-version": "^6.0.0",
     "pkg-up": "^3.1.0",
     "recast": "^0.20.5",
     "yargs": "^17.3.1"
