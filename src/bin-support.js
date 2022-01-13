@@ -68,9 +68,15 @@ async function runTemplateTransform(transformPath, args) {
     let binOptions = ['-t', transformPath, ...paths];
     let templateRecastDir = path.dirname(require.resolve('ember-template-recast/package.json'));
     let templateRecastPkg = require('ember-template-recast/package');
-    let templateRecastBinPath = path.join(templateRecastDir, templateRecastPkg.bin);
 
-    return execa(templateRecastBinPath, binOptions, {
+    // npm@6 changes `bin: 'lib/bin.js'` into `bin: { 'ember-template-recast':
+    // 'lib/bin.js' }` automatically this ensures that we read either format
+    let templateRecastBinPath =
+      typeof templateRecastPkg.bin === 'string'
+        ? templateRecastPkg.bin
+        : templateRecastPkg.bin['ember-template-recast'];
+
+    return execa(path.join(templateRecastDir, templateRecastBinPath), binOptions, {
       stdio: 'inherit',
       env: {
         CODEMOD_CLI_ARGS: JSON.stringify(options),
