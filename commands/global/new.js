@@ -32,12 +32,6 @@ module.exports.handler = async function handler(options) {
       \`\`\`
       npx ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
 
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
-      \`\`\`
-
       ## Local Usage
       \`\`\`
       node .${cliPath} <TRANSFORM NAME> path/of/files/ or/some**/*glob.js
@@ -54,15 +48,15 @@ module.exports.handler = async function handler(options) {
 
       * clone the repo
       * change into the repo directory
-      * \`yarn\`
+      * \`npm ci\`
 
       ### Running tests
 
-      * \`yarn test\`
+      * \`npm test\`
 
       ### Update Documentation
 
-      * \`yarn update-docs\`
+      * \`npm run update-docs\`
     `,
     'utf8'
   );
@@ -173,9 +167,9 @@ module.exports.handler = async function handler(options) {
             with:
               node-version: 12.x
           - name: install dependencies
-            run: yarn install --frozen-lockfile
+            run: npm ci
           - name: linting
-            run: yarn lint
+            run: npm run lint
 
         test:
           name: Tests
@@ -191,9 +185,9 @@ module.exports.handler = async function handler(options) {
             with:
               node-version: \${{ matrix.node }}
           - name: install dependencies
-            run: yarn install --frozen-lockfile
+            run: npm ci
           - name: test
-            run: yarn test
+            run: npm test
 
         floating-test:
           name: Floating dependencies
@@ -205,9 +199,9 @@ module.exports.handler = async function handler(options) {
             with:
               node-version: '12.x'
           - name: install dependencies
-            run: yarn install --no-lockfile
+            run: npm install --no-shrinkwrap
           - name: test
-            run: yarn test
+            run: npm test
     `
   );
   fs.outputFileSync(
