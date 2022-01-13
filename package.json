@@ -35,35 +35,35 @@
     "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
-    "@babel/parser": "^7.14.0",
+    "@babel/parser": "^7.16.8",
     "chalk": "^4.1.1",
-    "common-tags": "^1.8.0",
+    "common-tags": "^1.8.2",
     "ember-template-recast": "^4.1.4",
     "execa": "^5.0.0",
-    "fs-extra": "^9.1.0",
+    "fs-extra": "^10.0.0",
     "globby": "^11.0.2",
     "import-cwd": "^3.0.0",
-    "import-local": "^3.0.2",
+    "import-local": "^3.1.0",
     "jscodeshift": "^0.13.1",
     "latest-version": "^5.1.0",
     "pkg-up": "^3.1.0",
-    "recast": "^0.20.4",
-    "yargs": "^16.2.0"
+    "recast": "^0.20.5",
+    "yargs": "^17.3.1"
   },
   "devDependencies": {
     "broccoli-test-helper": "^2.0.0",
-    "coveralls": "^3.1.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^7.2.0",
+    "coveralls": "^3.1.1",
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "jest": "^26.6.3",
-    "prettier": "^2.2.1",
-    "qunit": "^2.15.0",
-    "release-it": "^14.10.1",
-    "release-it-lerna-changelog": "^3.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.4.7",
+    "prettier": "^2.5.1",
+    "qunit": "^2.17.2",
+    "release-it": "^14.12.1",
+    "release-it-lerna-changelog": "^4.0.1",
     "require-so-slow": "^2.0.5",
-    "walk-sync": "^2.2.0"
+    "walk-sync": "^3.0.0"
   },
   "engines": {
     "node": "12.* || 14.* || >= 16"
