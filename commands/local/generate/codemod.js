@@ -79,11 +79,6 @@ function jsHandler(options) {
 
       \`\`\`
       npx ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
-
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} ${codemodName} path/of/files/ or/some**/*glob.js
       \`\`\`
 
       ## Local Usage
@@ -163,11 +158,6 @@ function hbsHandler(options) {
 
       \`\`\`
       npx ${projectName} ${codemodName} path/of/files/ or/some**/*glob.hbs
-
-      # or
-
-      yarn global add ${projectName}
-      ${projectName} ${codemodName} path/of/files/ or/some**/*glob.hbs
       \`\`\`
 
       ## Local Usage

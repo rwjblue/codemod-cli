@@ -31,7 +31,7 @@ QUnit.module('codemod-cli', function (hooks) {
       const codemodCliPath = `${codemodProject.path()}/node_modules/codemod-cli`;
 
       if (installDeps) {
-        await execa('yarn');
+        await execa('npm', ['install']);
         fs.removeSync(jestPath);
         fs.removeSync(codemodCliPath);
       }
@@ -83,7 +83,7 @@ QUnit.module('codemod-cli', function (hooks) {
     setupProject(hooks, true);
 
     QUnit.test('should pass for a basic project', async function (assert) {
-      let result = await execa('yarn', ['lint']);
+      let result = await execa('npm', ['run', 'lint']);
       assert.equal(result.exitCode, 0, 'exited with zero');
     });
   });
