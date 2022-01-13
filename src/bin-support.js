@@ -2,22 +2,21 @@
 
 const DEFAULT_JS_EXTENSIONS = 'js,ts';
 
-async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS_EXTENSIONS) {
+async function runJsTransform(transformPath, args, extensions = DEFAULT_JS_EXTENSIONS) {
   const globby = require('globby');
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
   const { Readable } = require('stream');
   const { parseTransformArgs } = require('./options-support');
-  const { getTransformPath } = require('./transform-support');
 
   let { paths, options, transformerOptions } = parseTransformArgs(args);
 
   try {
     let foundPaths = await globby(paths, {
       expandDirectories: { extensions: extensions.split(',') },
+      gitignore: true,
     });
-    let transformPath = getTransformPath(root, transformName);
 
     let jscodeshiftPkg = require('jscodeshift/package');
 
@@ -57,17 +56,15 @@ async function runJsTransform(root, transformName, args, extensions = DEFAULT_JS
   }
 }
 
-async function runTemplateTransform(root, transformName, args) {
+async function runTemplateTransform(transformPath, args) {
   const execa = require('execa');
   const chalk = require('chalk');
   const path = require('path');
   const { parseTransformArgs } = require('./options-support');
-  const { getTransformPath } = require('./transform-support');
 
   let { paths, options } = parseTransformArgs(args);
 
   try {
-    let transformPath = getTransformPath(root, transformName);
     let binOptions = ['-t', transformPath, ...paths];
     let templateRecastDir = path.dirname(require.resolve('ember-template-recast/package.json'));
     let templateRecastPkg = require('ember-template-recast/package');
@@ -97,9 +94,9 @@ async function runTransform(binRoot, transformName, args, extensions) {
 
   switch (type) {
     case 'js':
-      return runJsTransform(root, transformName, args, extensions);
+      return runJsTransform(transformPath, args, extensions);
     case 'hbs':
-      return runTemplateTransform(root, transformName, args);
+      return runTemplateTransform(transformPath, args);
     default:
       throw new Error(`Unknown type passed to runTransform: "${type}"`);
   }

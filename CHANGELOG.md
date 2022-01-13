@@ -1,3 +1,16 @@
+# Changelog
+
+## v3.2.0 (2021-05-28)
+
+#### :rocket: Enhancement
+* [#179](https://github.com/rwjblue/codemod-cli/pull/179) Allow alternate folder structures for codemod-cli project ([@rwjblue](https://github.com/rwjblue))
+* [#166](https://github.com/rwjblue/codemod-cli/pull/166) Add gitignore option to globby ([@tylerbecks](https://github.com/tylerbecks))
+
+#### Committers: 2
+- Robert Jackson ([@rwjblue](https://github.com/rwjblue))
+- Tyler Becks ([@tylerbecks](https://github.com/tylerbecks))
+
+
 ## v3.1.2 (2021-02-17)
 
 #### :bug: Bug Fix

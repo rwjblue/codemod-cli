@@ -1,6 +1,6 @@
 {
   "name": "codemod-cli",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "a command line tool for generating, testing, and publishing codemods",
   "keywords": [
     "cli",
@@ -35,8 +35,8 @@
     "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
-    "@babel/parser": "^7.13.4",
-    "chalk": "^4.1.0",
+    "@babel/parser": "^7.14.0",
+    "chalk": "^4.1.1",
     "common-tags": "^1.8.0",
     "ember-template-recast": "^4.1.4",
     "execa": "^5.0.0",
@@ -44,7 +44,7 @@
     "globby": "^11.0.2",
     "import-cwd": "^3.0.0",
     "import-local": "^3.0.2",
-    "jscodeshift": "^0.11.0",
+    "jscodeshift": "^0.13.1",
     "latest-version": "^5.1.0",
     "pkg-up": "^3.1.0",
     "recast": "^0.20.4",
@@ -53,20 +53,20 @@
   "devDependencies": {
     "broccoli-test-helper": "^2.0.0",
     "coveralls": "^3.1.0",
-    "eslint": "^7.21.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
-    "qunit": "^2.14.0",
-    "release-it": "^14.4.1",
+    "qunit": "^2.15.0",
+    "release-it": "^14.10.1",
     "release-it-lerna-changelog": "^3.1.0",
     "require-so-slow": "^2.0.5",
     "walk-sync": "^2.2.0"
   },
   "engines": {
-    "node": "10.* || 12.* || >= 14"
+    "node": "12.* || 14.* || >= 16"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
