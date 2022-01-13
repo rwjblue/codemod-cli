@@ -38,7 +38,7 @@
     "@babel/parser": "^7.16.8",
     "chalk": "^4.1.1",
     "common-tags": "^1.8.2",
-    "ember-template-recast": "^4.1.4",
+    "ember-template-recast": "^6.1.2",
     "execa": "^5.0.0",
     "fs-extra": "^10.0.0",
     "globby": "^11.0.2",
