@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.16.8",
-    "chalk": "^4.1.1",
+    "chalk": "^5.0.0",
     "common-tags": "^1.8.2",
     "ember-template-recast": "^4.1.4",
     "execa": "^5.0.0",
