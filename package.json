@@ -60,7 +60,7 @@
     "jest": "^27.4.7",
     "prettier": "^2.5.1",
     "qunit": "^2.17.2",
-    "release-it": "^14.12.1",
+    "release-it": "^14.12.4",
     "release-it-lerna-changelog": "^4.0.1",
     "require-so-slow": "^2.0.5",
     "walk-sync": "^3.0.0"
