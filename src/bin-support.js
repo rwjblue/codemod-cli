@@ -24,6 +24,7 @@ async function runJsTransform(transformPath, args, extensions = DEFAULT_JS_EXTEN
     let binPath = path.join(jscodeshiftPath, jscodeshiftPkg.bin.jscodeshift);
 
     let binOptions = [
+      '--no-babel',
       '-t',
       transformPath,
       '--extensions',
