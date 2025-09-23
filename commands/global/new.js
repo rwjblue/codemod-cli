@@ -78,11 +78,12 @@ module.exports.handler = async function handler(options) {
         'codemod-cli': `^${pkg.version}`,
       },
       devDependencies: {
+        '@eslint/js': `^${await latestVersion('@eslint/js')}`,
         coveralls: pkg.devDependencies.coveralls,
         eslint: `^${await latestVersion('eslint')}`,
         'eslint-config-prettier': `^${await latestVersion('eslint-config-prettier')}`,
-        'eslint-plugin-node': `^${await latestVersion('eslint-plugin-node')}`,
-        'eslint-plugin-prettier': `^${await latestVersion('eslint-plugin-prettier')}`,
+        'eslint-plugin-n': `^${await latestVersion('eslint-plugin-n')}`,
+        globals: `^${await latestVersion('globals')}`,
         jest: pkg.devDependencies.jest,
         prettier: `^${await latestVersion('prettier')}`,
       },
@@ -98,35 +99,20 @@ module.exports.handler = async function handler(options) {
 
   // linting setup
   fs.outputFileSync(
-    projectName + '/.eslintrc.js',
+    projectName + '/eslint.config.mjs',
     stripIndent`
-      module.exports = {
-        parserOptions: {
-          ecmaVersion: 2018,
-        },
+      import js from "@eslint/js";
+      import n from "eslint-plugin-n";
+      import globals from "globals";
+      import { defineConfig } from "eslint/config";
 
-        plugins: ['prettier', 'node'],
-        extends: ['eslint:recommended', 'plugin:prettier/recommended', 'plugin:node/recommended'],
-        env: {
-          node: true,
-        },
-        rules: {},
-        overrides: [
-          {
-            files: ['__tests__/**/*.js'],
-            env: {
-              jest: true,
-            },
-          },
-        ],
-      };` + '\n'
-  );
-  fs.outputFileSync(
-    projectName + '/.eslintignore',
-    stripIndent`
-      !.*
-      __testfixtures__
-    `
+      export default defineConfig([
+        js.configs.recommended,
+        { files: ["**/*.{js,mjs,cjs}"], plugins: { n }, languageOptions: { globals: globals.node } },
+        { files: ["**/*.js"], languageOptions: { sourceType: "commonjs" } },
+        { ignores: ['!.*', '__testfixtures__'] }
+      ]);
+` + '\n'
   );
   fs.outputFileSync(
     projectName + '/.prettierrc',

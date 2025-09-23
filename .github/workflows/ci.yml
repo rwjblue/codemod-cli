@@ -17,14 +17,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 14.x
+        node-version: 22.x
+        cache: pnpm
     - name: install dependencies
-      run: npm ci
+      run: pnpm install
     - name: linting
-      run: npm run lint
+      run: pnpm run lint
 
   test:
     name: Tests
@@ -32,29 +34,32 @@ jobs:
 
     strategy:
       matrix:
-        node: ['12', '14', '16']
+        node: ['20', '22', '24']
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node }}
+        cache: pnpm
     - name: install dependencies
-      run: npm ci
+      run: pnpm install
     - name: test
-      run: npm test
+      run: pnpm test
 
   floating-test:
     name: Floating dependencies
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v4
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: '14.x'
+        node-version: '22.x'
     - name: install dependencies
-      run: npm install --no-shrinkwrap
+      run: pnpm install --no-lockfile
     - name: test
-      run: npm test
+      run: pnpm test
