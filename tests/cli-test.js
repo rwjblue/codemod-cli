@@ -62,8 +62,6 @@ QUnit.module('codemod-cli', function (hooks) {
       assert.equal(result.exitCode, 0, 'exited with zero');
       assert.deepEqual(walkSync(codemodProject.path()), [
         'ember-qunit-codemod/',
-        'ember-qunit-codemod/.eslintignore',
-        'ember-qunit-codemod/.eslintrc.js',
         'ember-qunit-codemod/.github/',
         'ember-qunit-codemod/.github/workflows/',
         'ember-qunit-codemod/.github/workflows/ci.yml',
@@ -72,6 +70,7 @@ QUnit.module('codemod-cli', function (hooks) {
         'ember-qunit-codemod/README.md',
         'ember-qunit-codemod/bin/',
         'ember-qunit-codemod/bin/cli.js',
+        'ember-qunit-codemod/eslint.config.mjs',
         'ember-qunit-codemod/package.json',
         'ember-qunit-codemod/transforms/',
         'ember-qunit-codemod/transforms/.gitkeep',
