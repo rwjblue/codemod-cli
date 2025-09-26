@@ -9,12 +9,15 @@ const EXECUTABLE_PATH = path.join(PROJECT_ROOT, 'bin', 'cli.js');
 const CodemodCLI = require('../src');
 const ROOT = process.cwd();
 
+// We need to update the linting story before we can fix this lint error. That is a much
+// bigger change and can happen in a follow-up PR
+// eslint-disable-next-line node/no-unsupported-features/es-syntax
 import { describe, test, beforeEach, beforeAll, afterEach, assert } from 'vitest';
 
-describe('codemod-cli', function (hooks) {
+describe('codemod-cli', function () {
   let codemodProject;
 
-  function setupProject(hooks, installDeps = false) {
+  function setupProject(installDeps = false) {
     let sharedProject;
 
     beforeAll(async function () {
@@ -80,8 +83,8 @@ describe('codemod-cli', function (hooks) {
     });
   });
 
-  describe('linting', function (hooks) {
-    setupProject(hooks, true);
+  describe('linting', function () {
+    setupProject(true);
 
     test('should pass for a basic project', async function () {
       let result = await execa('npm', ['run', 'lint']);
@@ -89,8 +92,8 @@ describe('codemod-cli', function (hooks) {
     });
   });
 
-  describe('update-docs', function (hooks) {
-    setupProject(hooks);
+  describe('update-docs', function () {
+    setupProject();
 
     test('updates top-level README with links to transform READMEs', async function () {
       codemodProject.write({
@@ -139,8 +142,8 @@ describe('codemod-cli', function (hooks) {
     });
   });
 
-  describe('generate', function (hooks) {
-    setupProject(hooks);
+  describe('generate', function () {
+    setupProject();
 
     describe('codemod', function () {
       test('should generate a js codemod', async function () {
@@ -222,32 +225,29 @@ describe('codemod-cli', function (hooks) {
         ]);
       });
 
-      test(
-        'should generate a fixture for the specified hbs codemod',
-        async function () {
-          await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
-          let result = await execa(EXECUTABLE_PATH, [
-            'generate',
-            'fixture',
-            'main',
-            'this-dot-owner',
-          ]);
+      test('should generate a fixture for the specified hbs codemod', async function () {
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
+        let result = await execa(EXECUTABLE_PATH, [
+          'generate',
+          'fixture',
+          'main',
+          'this-dot-owner',
+        ]);
 
-          assert.equal(result.exitCode, 0, 'exited with zero');
-          assert.deepEqual(walkSync(codemodProject.path('transforms')), [
-            '.gitkeep',
-            'main/',
-            'main/README.md',
-            'main/__testfixtures__/',
-            'main/__testfixtures__/basic.input.hbs',
-            'main/__testfixtures__/basic.output.hbs',
-            'main/__testfixtures__/this-dot-owner.input.hbs',
-            'main/__testfixtures__/this-dot-owner.output.hbs',
-            'main/index.js',
-            'main/test.js',
-          ]);
-        }
-      );
+        assert.equal(result.exitCode, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+          '.gitkeep',
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.hbs',
+          'main/__testfixtures__/basic.output.hbs',
+          'main/__testfixtures__/this-dot-owner.input.hbs',
+          'main/__testfixtures__/this-dot-owner.output.hbs',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
     });
 
     describe('test', function () {
@@ -302,17 +302,15 @@ describe('codemod-cli', function (hooks) {
         }
       });
 
-      test(
-        'transform should receive options from ${name}.options.json',
-        async function () {
-          const expectedReplacement = 'AAAAHHHHHH';
+      test('transform should receive options from ${name}.options.json', async function () {
+        const expectedReplacement = 'AAAAHHHHHH';
 
-          await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
                   const { getOptions } = require('codemod-cli');
                   module.exports = function transformer(file, api) {
@@ -328,19 +326,18 @@ describe('codemod-cli', function (hooks) {
                     .toSource();
                   }
                 `,
-                __testfixtures__: {
-                  'basic.input.js': 'var foo = "foo";',
-                  'basic.output.js': `var foo = "${expectedReplacement}";`,
-                  'basic.options.json': `{ "replaceAll": "${expectedReplacement}" }`,
-                },
+              __testfixtures__: {
+                'basic.input.js': 'var foo = "foo";',
+                'basic.output.js': `var foo = "${expectedReplacement}";`,
+                'basic.options.json': `{ "replaceAll": "${expectedReplacement}" }`,
               },
             },
-          });
+          },
+        });
 
-          let result = await execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.exitCode, 0, 'exited with zero');
-        }
-      );
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.exitCode, 0, 'exited with zero');
+      });
 
       test('transform should receive a file path in tests', async function () {
         const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
@@ -379,18 +376,16 @@ describe('codemod-cli', function (hooks) {
         assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
-      test(
-        'transform should receive a subfolder file path in tests',
-        async function () {
-          const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
-          const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.js`;
+      test('transform should receive a subfolder file path in tests', async function () {
+        const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
+        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.js`;
 
-          await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
 
                   module.exports = function transformer(file, api) {
@@ -406,25 +401,24 @@ describe('codemod-cli', function (hooks) {
                     .toSource();
                   }
                 `,
-                __testfixtures__: {
-                  foo: {
-                    'basic.input.js': 'var foo = "foo";',
-                    'basic.output.js': `var foo = "${expectedPath}";`,
-                  },
+              __testfixtures__: {
+                foo: {
+                  'basic.input.js': 'var foo = "foo";',
+                  'basic.output.js': `var foo = "${expectedPath}";`,
                 },
               },
             },
-          });
+          },
+        });
 
-          let result = await execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.exitCode, 0, 'exited with zero');
-        }
-      );
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.exitCode, 0, 'exited with zero');
+      });
     });
   });
 
-  describe('generated bin script', function (hooks) {
-    setupProject(hooks);
+  describe('generated bin script', function () {
+    setupProject();
 
     let userProject;
     beforeEach(async function () {
@@ -486,10 +480,10 @@ describe('codemod-cli', function (hooks) {
     });
   });
 
-  describe('programmatic API', function (hooks) {
-    setupProject(hooks);
+  describe('programmatic API', function () {
+    setupProject();
 
-    describe('runTransform', function (hooks) {
+    describe('runTransform', function () {
       let userProject;
 
       beforeEach(async function () {
@@ -750,7 +744,7 @@ describe('codemod-cli', function (hooks) {
       });
     });
 
-    describe('runTransform type=hbs', function (hooks) {
+    describe('runTransform type=hbs', function () {
       let userProject;
 
       beforeEach(async function () {
