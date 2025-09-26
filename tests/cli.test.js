@@ -36,7 +36,7 @@ describe('codemod-cli', function () {
       const codemodCliPath = `${codemodProject.path()}/node_modules/codemod-cli`;
 
       if (installDeps) {
-        await execa('npm', ['install']);
+        await execa('pnpm', ['install']);
         fs.removeSync(jestPath);
         fs.removeSync(codemodCliPath);
       }
@@ -45,7 +45,7 @@ describe('codemod-cli', function () {
       fs.ensureDirSync(`${codemodProject.path()}/node_modules`);
       fs.symlinkSync(`${ROOT}/node_modules/jest`, jestPath);
       fs.symlinkSync(PROJECT_ROOT, codemodCliPath);
-    });
+    }, 50000);
   }
 
   beforeEach(async function () {
@@ -500,7 +500,7 @@ describe('codemod-cli', function () {
         return userProject.dispose();
       });
 
-      test('runs transform', async function () {
+      test('runs transform', { timeout: 50000 }, async function () {
         userProject.write({
           foo: {
             'something.js': 'let blah = bar;',
