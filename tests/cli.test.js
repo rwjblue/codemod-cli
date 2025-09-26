@@ -9,13 +9,18 @@ const EXECUTABLE_PATH = path.join(PROJECT_ROOT, 'bin', 'cli.js');
 const CodemodCLI = require('../src');
 const ROOT = process.cwd();
 
-QUnit.module('codemod-cli', function (hooks) {
+// We need to update the linting story before we can fix this lint error. That is a much
+// bigger change and can happen in a follow-up PR
+// eslint-disable-next-line node/no-unsupported-features/es-syntax
+import { describe, test, beforeEach, beforeAll, afterEach, assert } from 'vitest';
+
+describe('codemod-cli', function () {
   let codemodProject;
 
-  function setupProject(hooks, installDeps = false) {
+  function setupProject(installDeps = false) {
     let sharedProject;
 
-    hooks.before(async function () {
+    beforeAll(async function () {
       sharedProject = await createTempDir();
 
       process.chdir(sharedProject.path());
@@ -24,14 +29,14 @@ QUnit.module('codemod-cli', function (hooks) {
       process.chdir(ROOT);
     });
 
-    hooks.beforeEach(async function () {
+    beforeEach(async function () {
       codemodProject.copy(sharedProject.path('test-project'));
 
       const jestPath = `${codemodProject.path()}/node_modules/jest`;
       const codemodCliPath = `${codemodProject.path()}/node_modules/codemod-cli`;
 
       if (installDeps) {
-        await execa('npm', ['install']);
+        await execa('pnpm', ['install']);
         fs.removeSync(jestPath);
         fs.removeSync(codemodCliPath);
       }
@@ -40,23 +45,23 @@ QUnit.module('codemod-cli', function (hooks) {
       fs.ensureDirSync(`${codemodProject.path()}/node_modules`);
       fs.symlinkSync(`${ROOT}/node_modules/jest`, jestPath);
       fs.symlinkSync(PROJECT_ROOT, codemodCliPath);
-    });
+    }, 50000);
   }
 
-  hooks.beforeEach(async function () {
+  beforeEach(async function () {
     codemodProject = await createTempDir();
 
     process.chdir(codemodProject.path());
   });
 
-  hooks.afterEach(async function () {
+  afterEach(async function () {
     process.chdir(ROOT);
 
     await codemodProject.dispose();
   });
 
-  QUnit.module('new', function () {
-    QUnit.test('should generate a basic project structure', async function (assert) {
+  describe('new', function () {
+    test('should generate a basic project structure', async function () {
       let result = await execa(EXECUTABLE_PATH, ['new', 'ember-qunit-codemod']);
 
       assert.equal(result.exitCode, 0, 'exited with zero');
@@ -78,19 +83,19 @@ QUnit.module('codemod-cli', function (hooks) {
     });
   });
 
-  QUnit.module('linting', function (hooks) {
-    setupProject(hooks, true);
+  describe('linting', function () {
+    setupProject(true);
 
-    QUnit.test('should pass for a basic project', async function (assert) {
+    test('should pass for a basic project', async function () {
       let result = await execa('npm', ['run', 'lint']);
       assert.equal(result.exitCode, 0, 'exited with zero');
     });
   });
 
-  QUnit.module('update-docs', function (hooks) {
-    setupProject(hooks);
+  describe('update-docs', function () {
+    setupProject();
 
-    QUnit.test('updates top-level README with links to transform READMEs', async function (assert) {
+    test('updates top-level README with links to transform READMEs', async function () {
       codemodProject.write({
         transforms: {
           foo: { 'README.md': 'some content' },
@@ -105,7 +110,7 @@ QUnit.module('codemod-cli', function (hooks) {
       assert.ok(README.includes('* [bar](transforms/bar/README.md'), 'bar link');
     });
 
-    QUnit.test('should allow different input/output extensions', async function (assert) {
+    test('should allow different input/output extensions', async function () {
       codemodProject.write({
         transforms: {
           main: {
@@ -137,11 +142,11 @@ QUnit.module('codemod-cli', function (hooks) {
     });
   });
 
-  QUnit.module('generate', function (hooks) {
-    setupProject(hooks);
+  describe('generate', function () {
+    setupProject();
 
-    QUnit.module('codemod', function () {
-      QUnit.test('should generate a js codemod', async function (assert) {
+    describe('codemod', function () {
+      test('should generate a js codemod', async function () {
         let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
         assert.equal(result.exitCode, 0, 'exited with zero');
@@ -157,7 +162,7 @@ QUnit.module('codemod-cli', function (hooks) {
         ]);
       });
 
-      QUnit.test('should generate a codemod in a custom directory', async function (assert) {
+      test('should generate a codemod in a custom directory', async function () {
         let result = await execa(EXECUTABLE_PATH, [
           'generate',
           'codemod',
@@ -178,7 +183,7 @@ QUnit.module('codemod-cli', function (hooks) {
         ]);
       });
 
-      QUnit.test('should generate a hbs codemod', async function (assert) {
+      test('should generate a hbs codemod', async function () {
         let result = await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
 
         assert.equal(result.exitCode, 0, 'exited with zero');
@@ -195,8 +200,8 @@ QUnit.module('codemod-cli', function (hooks) {
       });
     });
 
-    QUnit.module('fixture', function () {
-      QUnit.test('should generate a fixture for the specified js codemod', async function (assert) {
+    describe('fixture', function () {
+      test('should generate a fixture for the specified js codemod', async function () {
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
         let result = await execa(EXECUTABLE_PATH, [
           'generate',
@@ -220,36 +225,33 @@ QUnit.module('codemod-cli', function (hooks) {
         ]);
       });
 
-      QUnit.test(
-        'should generate a fixture for the specified hbs codemod',
-        async function (assert) {
-          await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
-          let result = await execa(EXECUTABLE_PATH, [
-            'generate',
-            'fixture',
-            'main',
-            'this-dot-owner',
-          ]);
+      test('should generate a fixture for the specified hbs codemod', async function () {
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
+        let result = await execa(EXECUTABLE_PATH, [
+          'generate',
+          'fixture',
+          'main',
+          'this-dot-owner',
+        ]);
 
-          assert.equal(result.exitCode, 0, 'exited with zero');
-          assert.deepEqual(walkSync(codemodProject.path('transforms')), [
-            '.gitkeep',
-            'main/',
-            'main/README.md',
-            'main/__testfixtures__/',
-            'main/__testfixtures__/basic.input.hbs',
-            'main/__testfixtures__/basic.output.hbs',
-            'main/__testfixtures__/this-dot-owner.input.hbs',
-            'main/__testfixtures__/this-dot-owner.output.hbs',
-            'main/index.js',
-            'main/test.js',
-          ]);
-        }
-      );
+        assert.equal(result.exitCode, 0, 'exited with zero');
+        assert.deepEqual(walkSync(codemodProject.path('transforms')), [
+          '.gitkeep',
+          'main/',
+          'main/README.md',
+          'main/__testfixtures__/',
+          'main/__testfixtures__/basic.input.hbs',
+          'main/__testfixtures__/basic.output.hbs',
+          'main/__testfixtures__/this-dot-owner.input.hbs',
+          'main/__testfixtures__/this-dot-owner.output.hbs',
+          'main/index.js',
+          'main/test.js',
+        ]);
+      });
     });
 
-    QUnit.module('test', function () {
-      QUnit.test('should pass for a basic project with an empty codemod', async function (assert) {
+    describe('test', function () {
+      test('should pass for a basic project with an empty codemod', async function () {
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
         await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
 
@@ -257,7 +259,7 @@ QUnit.module('codemod-cli', function (hooks) {
         assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
-      QUnit.test('should pass for an empty codemod in a custom directory', async function (assert) {
+      test('should pass for an empty codemod in a custom directory', async function () {
         await execa(EXECUTABLE_PATH, [
           'generate',
           'codemod',
@@ -278,7 +280,7 @@ QUnit.module('codemod-cli', function (hooks) {
         assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
-      QUnit.test('should fail when input and output do not match', async function (assert) {
+      test('should fail when input and output do not match', async function () {
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
         await execa(EXECUTABLE_PATH, ['generate', 'fixture', 'main', 'this-dot-owner']);
 
@@ -300,17 +302,15 @@ QUnit.module('codemod-cli', function (hooks) {
         }
       });
 
-      QUnit.test(
-        'transform should receive options from ${name}.options.json',
-        async function (assert) {
-          const expectedReplacement = 'AAAAHHHHHH';
+      test('transform should receive options from ${name}.options.json', async function () {
+        const expectedReplacement = 'AAAAHHHHHH';
 
-          await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
                   const { getOptions } = require('codemod-cli');
                   module.exports = function transformer(file, api) {
@@ -326,21 +326,20 @@ QUnit.module('codemod-cli', function (hooks) {
                     .toSource();
                   }
                 `,
-                __testfixtures__: {
-                  'basic.input.js': 'var foo = "foo";',
-                  'basic.output.js': `var foo = "${expectedReplacement}";`,
-                  'basic.options.json': `{ "replaceAll": "${expectedReplacement}" }`,
-                },
+              __testfixtures__: {
+                'basic.input.js': 'var foo = "foo";',
+                'basic.output.js': `var foo = "${expectedReplacement}";`,
+                'basic.options.json': `{ "replaceAll": "${expectedReplacement}" }`,
               },
             },
-          });
+          },
+        });
 
-          let result = await execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.exitCode, 0, 'exited with zero');
-        }
-      );
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.exitCode, 0, 'exited with zero');
+      });
 
-      QUnit.test('transform should receive a file path in tests', async function (assert) {
+      test('transform should receive a file path in tests', async function () {
         const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
         const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/basic.js`;
 
@@ -377,18 +376,16 @@ QUnit.module('codemod-cli', function (hooks) {
         assert.equal(result.exitCode, 0, 'exited with zero');
       });
 
-      QUnit.test(
-        'transform should receive a subfolder file path in tests',
-        async function (assert) {
-          const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
-          const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.js`;
+      test('transform should receive a subfolder file path in tests', async function () {
+        const realCodemodProjectPath = fs.realpathSync(codemodProject.path());
+        const expectedPath = `${realCodemodProjectPath}/transforms/main/__testfixtures__/foo/basic.js`;
 
-          await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
+        await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
-          codemodProject.write({
-            transforms: {
-              main: {
-                'index.js': `
+        codemodProject.write({
+          transforms: {
+            main: {
+              'index.js': `
                   const { getParser } = require('codemod-cli').jscodeshift;
 
                   module.exports = function transformer(file, api) {
@@ -404,28 +401,27 @@ QUnit.module('codemod-cli', function (hooks) {
                     .toSource();
                   }
                 `,
-                __testfixtures__: {
-                  foo: {
-                    'basic.input.js': 'var foo = "foo";',
-                    'basic.output.js': `var foo = "${expectedPath}";`,
-                  },
+              __testfixtures__: {
+                foo: {
+                  'basic.input.js': 'var foo = "foo";',
+                  'basic.output.js': `var foo = "${expectedPath}";`,
                 },
               },
             },
-          });
+          },
+        });
 
-          let result = await execa(EXECUTABLE_PATH, ['test']);
-          assert.equal(result.exitCode, 0, 'exited with zero');
-        }
-      );
+        let result = await execa(EXECUTABLE_PATH, ['test']);
+        assert.equal(result.exitCode, 0, 'exited with zero');
+      });
     });
   });
 
-  QUnit.module('generated bin script', function (hooks) {
-    setupProject(hooks);
+  describe('generated bin script', function () {
+    setupProject();
 
     let userProject;
-    hooks.beforeEach(async function () {
+    beforeEach(async function () {
       // fix mode of bin script (lost during sharedProject.copy())
       fs.chmodSync(codemodProject.path('bin/cli.js'), 0o755);
 
@@ -436,13 +432,13 @@ QUnit.module('codemod-cli', function (hooks) {
       process.chdir(userProject.path());
     });
 
-    hooks.afterEach(function () {
+    afterEach(function () {
       process.chdir(ROOT);
 
       return userProject.dispose();
     });
 
-    QUnit.test('works with globs', async function (assert) {
+    test('works with globs', async function () {
       userProject.write({
         foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
       });
@@ -457,7 +453,7 @@ QUnit.module('codemod-cli', function (hooks) {
       });
     });
 
-    QUnit.test('works with custom codemod directory', async function (assert) {
+    test('works with custom codemod directory', async function () {
       userProject.write({
         foo: { 'something.js': 'let blah = bar', 'other.js': 'let blah = bar' },
       });
@@ -484,13 +480,13 @@ QUnit.module('codemod-cli', function (hooks) {
     });
   });
 
-  QUnit.module('programmatic API', function (hooks) {
-    setupProject(hooks);
+  describe('programmatic API', function () {
+    setupProject();
 
-    QUnit.module('runTransform', function (hooks) {
+    describe('runTransform', function () {
       let userProject;
 
-      hooks.beforeEach(async function () {
+      beforeEach(async function () {
         // includes simple identifier reverser
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main']);
 
@@ -498,13 +494,13 @@ QUnit.module('codemod-cli', function (hooks) {
         process.chdir(userProject.path());
       });
 
-      hooks.afterEach(function () {
+      afterEach(function () {
         process.chdir(ROOT);
 
         return userProject.dispose();
       });
 
-      QUnit.test('runs transform', async function (assert) {
+      test('runs transform', { timeout: 50000 }, async function () {
         userProject.write({
           foo: {
             'something.js': 'let blah = bar;',
@@ -524,7 +520,7 @@ QUnit.module('codemod-cli', function (hooks) {
         });
       });
 
-      QUnit.test('runs transform with options', async function (assert) {
+      test('runs transform with options', async function () {
         codemodProject.write({
           transforms: {
             main: {
@@ -565,7 +561,7 @@ QUnit.module('codemod-cli', function (hooks) {
         });
       });
 
-      QUnit.test('can specify additional extensions to run against', async function (assert) {
+      test('can specify additional extensions to run against', async function () {
         codemodProject.write({
           transforms: {
             main: {
@@ -589,7 +585,7 @@ QUnit.module('codemod-cli', function (hooks) {
         });
       });
 
-      QUnit.test('should ignore patterns from configuration option', async function (assert) {
+      test('should ignore patterns from configuration option', async function () {
         codemodProject.write({
           transforms: {
             main: {
@@ -620,7 +616,7 @@ QUnit.module('codemod-cli', function (hooks) {
         });
       });
 
-      QUnit.test('should ignore patterns from configuration file', async function (assert) {
+      test('should ignore patterns from configuration file', async function () {
         codemodProject.write({
           transforms: {
             main: {
@@ -653,7 +649,7 @@ QUnit.module('codemod-cli', function (hooks) {
         });
       });
 
-      QUnit.test('runs transform against class syntax', async function (assert) {
+      test('runs transform against class syntax', async function () {
         userProject.write({
           foo: {
             'something.js': `
@@ -697,7 +693,7 @@ QUnit.module('codemod-cli', function (hooks) {
         });
       });
 
-      QUnit.test('runs transform against decorator syntax', async function (assert) {
+      test('runs transform against decorator syntax', async function () {
         userProject.write({
           foo: {
             'something.js': `
@@ -748,10 +744,10 @@ QUnit.module('codemod-cli', function (hooks) {
       });
     });
 
-    QUnit.module('runTransform type=hbs', function (hooks) {
+    describe('runTransform type=hbs', function () {
       let userProject;
 
-      hooks.beforeEach(async function () {
+      beforeEach(async function () {
         // includes simple mustache transform
         await execa(EXECUTABLE_PATH, ['generate', 'codemod', 'main', '--type', 'hbs']);
 
@@ -759,13 +755,13 @@ QUnit.module('codemod-cli', function (hooks) {
         process.chdir(userProject.path());
       });
 
-      hooks.afterEach(function () {
+      afterEach(function () {
         process.chdir(ROOT);
 
         return userProject.dispose();
       });
 
-      QUnit.test('runs transform', async function (assert) {
+      test('runs transform', async function () {
         userProject.write({
           foo: {
             'something.hbs': '{{what}}',
@@ -783,7 +779,7 @@ QUnit.module('codemod-cli', function (hooks) {
         });
       });
 
-      QUnit.test('runs transform with options', async function (assert) {
+      test('runs transform with options', async function () {
         codemodProject.write({
           transforms: {
             main: {
