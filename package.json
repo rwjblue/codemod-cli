@@ -31,7 +31,6 @@
   "scripts": {
     "lint": "eslint .",
     "lint:js": "eslint .",
-    "release": "release-it",
     "test": "qunit tests/**/*-test.js"
   },
   "dependencies": {
@@ -60,31 +59,15 @@
     "jest": "^27.4.7",
     "prettier": "^2.5.1",
     "qunit": "^2.17.2",
-    "release-it": "^14.12.1",
-    "release-it-lerna-changelog": "^4.0.1",
+    "release-plan": "^0.17.0",
     "require-so-slow": "^2.0.5",
     "walk-sync": "^3.0.0"
   },
+  "packageManager": "pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a",
   "engines": {
     "node": "20.* || 22.* || >= 24"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
-  },
-  "release-it": {
-    "plugins": {
-      "release-it-lerna-changelog": {
-        "infile": "CHANGELOG.md",
-        "launchEditor": true
-      }
-    },
-    "git": {
-      "tagName": "v${version}"
-    },
-    "github": {
-      "release": true,
-      "tokenRef": "GITHUB_AUTH"
-    }
-  },
-  "packageManager": "pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a"
+  }
 }
