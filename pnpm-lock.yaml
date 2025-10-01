@@ -39,8 +39,8 @@ importers:
         specifier: ^0.13.1
         version: 0.13.1(@babel/preset-env@7.28.3(@babel/core@7.28.4))
       latest-version:
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^9.0.0
+        version: 9.0.0
       pkg-up:
         specifier: ^3.1.0
         version: 3.1.0
@@ -2923,8 +2923,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  ky@1.10.0:
-    resolution: {integrity: sha512-YRPCzHEWZffbfvmRrfwa+5nwBHwZuYiTrfDX0wuhGBPV0pA/zCqcOq93MDssON/baIkpYbvehIX5aLpMxrRhaA==}
+  ky@1.11.0:
+    resolution: {integrity: sha512-NEyo0ICpS0cqSuyoJFMCnHOZJILqXsKhIZlHJGDYaH8OB5IFrGzuBpEwyoMZG6gUKMPrazH30Ax5XKaujvD8ag==}
     engines: {node: '>=18'}
 
   latest-version@5.1.0:
@@ -8161,7 +8161,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  ky@1.10.0: {}
+  ky@1.11.0: {}
 
   latest-version@5.1.0:
     dependencies:
@@ -8627,7 +8627,7 @@ snapshots:
 
   package-json@10.0.1:
     dependencies:
-      ky: 1.10.0
+      ky: 1.11.0
       registry-auth-token: 5.1.0
       registry-url: 6.0.1
       semver: 7.7.2
