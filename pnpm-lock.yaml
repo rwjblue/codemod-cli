@@ -21,8 +21,8 @@ importers:
         specifier: ^4.1.4
         version: 4.3.0
       execa:
-        specifier: ^5.0.0
-        version: 5.1.1
+        specifier: ^9.6.0
+        version: 9.6.0
       fs-extra:
         specifier: ^10.0.0
         version: 10.1.0
