@@ -40,7 +40,7 @@
     "ember-template-recast": "^4.1.4",
     "execa": "^5.0.0",
     "fs-extra": "^10.0.0",
-    "globby": "^11.0.2",
+    "globby": "^15.0.0",
     "import-cwd": "^3.0.0",
     "import-local": "^3.1.0",
     "jscodeshift": "^0.13.1",
